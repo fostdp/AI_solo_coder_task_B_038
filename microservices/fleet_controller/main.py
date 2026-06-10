@@ -295,39 +295,74 @@ class IntegerProgrammingSolver:
                                 start_time: datetime,
                                 price_schedule: List[TimeSlot],
                                 profiles: List[Dict]) -> float:
-        """计算基准成本（不优化的顺序调度）"""
+        """计算基准成本（不优化的顺序调度，使用相同的配方选择逻辑）"""
         available_devices = sorted([
             (d, s) for d, s in device_states.items()
             if s.status == "idle"
         ], key=lambda x: x[0])
         
+        # 如果没有电价表，生成默认的
+        if not price_schedule:
+            price_schedule = self._get_electricity_prices(start_time, time_horizon_hours)
+        
+        # 按能耗排序配方（与启发式算法相同的逻辑）
+        sorted_profiles = sorted(profiles, key=lambda p: p['energy_kwh'], reverse=True)
+        
         total_cost = 0.0
         batches_scheduled = 0
         device_next_available = {d: 0.0 for d, _ in available_devices}
         
-        for batch_idx in range(required_batches):
-            if not available_devices:
+        # 跟踪每个小时的并发设备数
+        max_concurrent = self.constraints.get('max_concurrent_devices', 10)
+        concurrent_tracker = [0] * time_horizon_hours
+        
+        def _check_concurrent(start_hour: int, duration_hours: float) -> bool:
+            end_hour = min(start_hour + int(duration_hours) + 1, time_horizon_hours)
+            for h in range(start_hour, end_hour):
+                if concurrent_tracker[h] >= max_concurrent:
+                    return False
+            return True
+        
+        def _update_concurrent(start_hour: int, duration_hours: float, delta: int):
+            end_hour = min(start_hour + int(duration_hours) + 1, time_horizon_hours)
+            for h in range(start_hour, end_hour):
+                concurrent_tracker[h] += delta
+        
+        while batches_scheduled < required_batches:
+            scheduled_this_round = False
+            
+            for profile in sorted_profiles:
+                if batches_scheduled >= required_batches:
+                    break
+                
+                duration_hours = profile['primary_drying_hours'] + profile['secondary_drying_hours']
+                
+                # 找第一个可用的设备和最早的时间（不考虑电价）
+                for device_id, state in available_devices:
+                    next_avail = device_next_available[device_id]
+                    next_avail_hour = int(next_avail) // 3600
+                    
+                    # 找最早的可用时间
+                    for start_hour in range(next_avail_hour, time_horizon_hours - int(duration_hours) + 1):
+                        if _check_concurrent(start_hour, duration_hours):
+                            # 计算成本（不优化，按实际电价）
+                            cost = 0
+                            for h in range(start_hour, min(start_hour + int(duration_hours), time_horizon_hours)):
+                                if h < len(price_schedule):
+                                    cost += price_schedule[h].price * profile['energy_kwh'] / duration_hours
+                            
+                            _update_concurrent(start_hour, duration_hours, 1)
+                            total_cost += cost
+                            device_next_available[device_id] = (start_hour + duration_hours) * 3600
+                            batches_scheduled += 1
+                            scheduled_this_round = True
+                            break
+                    
+                    if scheduled_this_round:
+                        break
+            
+            if not scheduled_this_round:
                 break
-            
-            # 按顺序选择设备
-            device_idx = batch_idx % len(available_devices)
-            device_id = available_devices[device_idx][0]
-            profile = profiles[0]  # 默认第一个配方
-            
-            start_hour = int(device_next_available[device_id] // 3600)
-            if start_hour >= time_horizon_hours:
-                break
-            
-            duration_hours = profile['primary_drying_hours'] + profile['secondary_drying_hours']
-            
-            cost = 0
-            for h in range(start_hour, min(start_hour + int(duration_hours), time_horizon_hours)):
-                if h < len(price_schedule):
-                    cost += price_schedule[h].price * profile['energy_kwh'] / duration_hours
-            
-            total_cost += cost
-            device_next_available[device_id] = (start_hour + duration_hours) * 3600
-            batches_scheduled += 1
         
         return total_cost
     
@@ -336,7 +371,7 @@ class IntegerProgrammingSolver:
                            time_horizon_hours: int,
                            start_time: datetime,
                            price_schedule: List[TimeSlot]) -> Tuple[List[ScheduledBatch], float, float, str]:
-        """启发式算法：优先在谷电时段调度高能耗批次"""
+        """启发式算法：优先在谷电时段调度高能耗批次，满足最大并发约束"""
         available_devices = sorted([
             (d, s) for d, s in device_states.items()
             if s.status == "idle"
@@ -352,6 +387,10 @@ class IntegerProgrammingSolver:
                 {'formula_id': 'FORMULA-001', 'primary_drying_hours': 24, 'secondary_drying_hours': 8, 'energy_kwh': 120, 'priority': 1},
             ]
         
+        # 如果没有电价表，生成默认的
+        if not price_schedule:
+            price_schedule = self._get_electricity_prices(start_time, time_horizon_hours)
+        
         # 按能耗排序配方（高能耗优先谷电）
         sorted_profiles = sorted(profiles, key=lambda p: p['energy_kwh'], reverse=True)
         
@@ -359,11 +398,29 @@ class IntegerProgrammingSolver:
         total_cost = 0.0
         device_next_available = {d: 0.0 for d, _ in available_devices}
         
+        # 跟踪每个小时的并发设备数
+        max_concurrent = self.constraints.get('max_concurrent_devices', 10)
+        concurrent_tracker = [0] * time_horizon_hours
+        
         # 找出谷电时段
         valley_hours = [i for i, slot in enumerate(price_schedule) if slot.is_valley]
         
         batches_scheduled = 0
         start_ts = start_time.timestamp()
+        
+        def _check_concurrent(start_hour: int, duration_hours: float) -> bool:
+            """检查该时间段是否满足最大并发约束"""
+            end_hour = min(start_hour + int(duration_hours) + 1, time_horizon_hours)
+            for h in range(start_hour, end_hour):
+                if concurrent_tracker[h] >= max_concurrent:
+                    return False
+            return True
+        
+        def _update_concurrent(start_hour: int, duration_hours: float, delta: int):
+            """更新并发跟踪器"""
+            end_hour = min(start_hour + int(duration_hours) + 1, time_horizon_hours)
+            for h in range(start_hour, end_hour):
+                concurrent_tracker[h] += delta
         
         while batches_scheduled < required_batches:
             scheduled_this_round = False
@@ -377,22 +434,24 @@ class IntegerProgrammingSolver:
                 best_start_hour = None
                 best_cost = float('inf')
                 
+                duration_hours = profile['primary_drying_hours'] + profile['secondary_drying_hours']
+                
                 for device_id, state in available_devices:
                     next_avail = device_next_available[device_id]
                     next_avail_hour = int(next_avail) // 3600
-                    
-                    duration_hours = profile['primary_drying_hours'] + profile['secondary_drying_hours']
                     
                     # 优先尝试谷电时段开始
                     candidate_hours = []
                     for valley_h in valley_hours:
                         if valley_h >= next_avail_hour and valley_h + duration_hours <= time_horizon_hours:
-                            candidate_hours.append(valley_h)
+                            if _check_concurrent(valley_h, duration_hours):
+                                candidate_hours.append(valley_h)
                     
                     # 如果没有合适的谷电时段，尝试任意可用时间
                     if not candidate_hours:
                         for h in range(next_avail_hour, time_horizon_hours - int(duration_hours) + 1):
-                            candidate_hours.append(h)
+                            if _check_concurrent(h, duration_hours):
+                                candidate_hours.append(h)
                     
                     for start_hour in candidate_hours:
                         # 计算该时段的电费
@@ -410,6 +469,9 @@ class IntegerProgrammingSolver:
                     batch_id = f"BATCH-{start_time.strftime('%Y%m%d')}-{batches_scheduled + 1:03d}"
                     batch_start = start_ts + best_start_hour * 3600
                     batch_end = batch_start + duration_hours * 3600
+                    
+                    # 更新并发跟踪器
+                    _update_concurrent(best_start_hour, duration_hours, 1)
                     
                     schedule.append(ScheduledBatch(
                         device_id=best_device,

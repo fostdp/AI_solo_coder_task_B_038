@@ -1,0 +1,42 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: d:\SOLO-2\AI_solo_coder_task_B_038
+configfile: pytest.ini
+plugins: anyio-3.7.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 1 item
+
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_endpoint_normal FAILED [100%]
+
+================================== FAILURES ===================================
+______ TestFirstDerivativeDetector.test_secondary_drying_endpoint_normal ______
+
+self = <tests.test_endpoint_detection.TestFirstDerivativeDetector object at 0x000001CD253C0190>
+detector = <endpoint_detector.main.FirstDerivativeDetector object at 0x000001CD251EF230>
+
+    def test_secondary_drying_endpoint_normal(self, detector):
+        """正常场景：二次干燥终点检测 - 温度变化率极小"""
+        times = []
+        temps = []
+        t0 = datetime.now(timezone.utc).timestamp()
+    
+        for i in range(100):
+            times.append(t0 + i * 10)
+            if i < 50:
+                temps.append(20 + i * 0.1)
+            else:
+                temps.append(25 + (i - 50) * 0.005)
+    
+        for i in range(len(times)):
+            is_end, deriv, smoothed = detector.detect_secondary_endpoint(
+                times[:i+1], temps[:i+1]
+            )
+    
+>       assert is_end == True
+E       assert False == True
+
+tests\test_endpoint_detection.py:80: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_endpoint_normal - assert False == True
+============================== 1 failed in 0.54s ==============================

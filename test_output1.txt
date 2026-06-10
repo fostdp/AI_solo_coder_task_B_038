@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: d:\SOLO-2\AI_solo_coder_task_B_038
+configfile: pytest.ini
+plugins: anyio-3.7.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 3 items
+
+tests/test_defect_detection.py::TestSEBlock::test_se_block_forward PASSED [ 33%]
+tests/test_defect_detection.py::TestSEBlock::test_se_block_attention_weights PASSED [ 66%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_forward_pass_normal PASSED [100%]
+
+============================== 3 passed in 2.76s ==============================

@@ -1,0 +1,482 @@
+
+============================================================
+Running: tests/test_endpoint_detection.py
+============================================================
+
+============================= test session starts =============================
+collecting ... collected 20 items
+
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_primary_drying_endpoint_normal FAILED [  5%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_endpoint_normal FAILED [ 10%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_primary_drying_boundary_threshold FAILED [ 15%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_boundary_oscillating FAILED [ 20%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_insufficient_data PASSED [ 25%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_savitzky_golay_smoothing FAILED [ 30%]
+tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_consecutive_points_required FAILED [ 35%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_normal_pattern_training PASSED [ 40%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_normal_reconstruction_error PASSED [ 45%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_anomaly_detection_sensitivity PASSED [ 50%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_insufficient_training_data PASSED [ 55%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_predict_before_training PASSED [ 60%]
+tests/test_endpoint_detection.py::TestAutoencoderDetector::test_feature_extraction_normal PASSED [ 65%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_primary_drying_prt_normal FAILED [ 70%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_secondary_drying_prt_normal FAILED [ 75%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_boundary_threshold FAILED [ 80%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_in_progress FAILED [ 85%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_too_frequent FAILED [ 90%]
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_linear_regression_accuracy FAILED [ 95%]
+tests/test_endpoint_detection.py::TestCycleTimeReduction::test_combined_decision_reduces_cycle FAILED [100%]
+
+================================== FAILURES ===================================
+_______ TestFirstDerivativeDetector.test_primary_drying_endpoint_normal _______
+tests\test_endpoint_detection.py:54: in test_primary_drying_endpoint_normal
+    is_end, deriv, smoothed = detector.detect_primary_endpoint(
+microservices\endpoint_detector\main.py:118: in detect_primary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+______ TestFirstDerivativeDetector.test_secondary_drying_endpoint_normal ______
+tests\test_endpoint_detection.py:76: in test_secondary_drying_endpoint_normal
+    is_end, deriv, smoothed = detector.detect_secondary_endpoint(
+microservices\endpoint_detector\main.py:145: in detect_secondary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+_____ TestFirstDerivativeDetector.test_primary_drying_boundary_threshold ______
+tests\test_endpoint_detection.py:97: in test_primary_drying_boundary_threshold
+    is_end, deriv, smoothed = detector.detect_primary_endpoint(
+microservices\endpoint_detector\main.py:118: in detect_primary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+___ TestFirstDerivativeDetector.test_secondary_drying_boundary_oscillating ____
+tests\test_endpoint_detection.py:116: in test_secondary_drying_boundary_oscillating
+    is_end, deriv, smoothed = detector.detect_secondary_endpoint(
+microservices\endpoint_detector\main.py:145: in detect_secondary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+__________ TestFirstDerivativeDetector.test_savitzky_golay_smoothing __________
+tests\test_endpoint_detection.py:137: in test_savitzky_golay_smoothing
+    smoothed = detector.savitzky_golay(noisy, 10, 2)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+________ TestFirstDerivativeDetector.test_consecutive_points_required _________
+tests\test_endpoint_detection.py:154: in test_consecutive_points_required
+    is_end, deriv, smoothed = detector.detect_secondary_endpoint(times, temps)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:145: in detect_secondary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+_________ TestPressureRiseTestManager.test_primary_drying_prt_normal __________
+tests\test_endpoint_detection.py:303: in test_primary_drying_prt_normal
+    prt_manager.start_test(state, 1.0)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+________ TestPressureRiseTestManager.test_secondary_drying_prt_normal _________
+tests\test_endpoint_detection.py:324: in test_secondary_drying_prt_normal
+    prt_manager.start_test(state, 0.05)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+___________ TestPressureRiseTestManager.test_prt_boundary_threshold ___________
+tests\test_endpoint_detection.py:345: in test_prt_boundary_threshold
+    prt_manager.start_test(state, 0.05)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+______________ TestPressureRiseTestManager.test_prt_in_progress _______________
+tests\test_endpoint_detection.py:365: in test_prt_in_progress
+    prt_manager.start_test(state, 1.0)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+______________ TestPressureRiseTestManager.test_prt_too_frequent ______________
+tests\test_endpoint_detection.py:382: in test_prt_too_frequent
+    prt_manager.start_test(state, 1.0)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+_________ TestPressureRiseTestManager.test_linear_regression_accuracy _________
+tests\test_endpoint_detection.py:395: in test_linear_regression_accuracy
+    prt_manager.start_test(state, 1.0)
+microservices\endpoint_detector\main.py:276: in start_test
+    now = time.time()
+          ^^^^
+E   NameError: name 'time' is not defined. Did you forget to import 'time'?
+_________ TestCycleTimeReduction.test_combined_decision_reduces_cycle _________
+tests\test_endpoint_detection.py:444: in test_combined_decision_reduces_cycle
+    is_end, deriv, smoothed = detector.detect_secondary_endpoint(
+microservices\endpoint_detector\main.py:145: in detect_secondary_endpoint
+    derivatives, smoothed = self.compute_derivative(ts_arr, temp_arr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:98: in compute_derivative
+    smoothed = self.savitzky_golay(values, self.window_size, self.poly_order)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\endpoint_detector\main.py:88: in savitzky_golay
+    coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\numpy\lib\_polynomial_impl.py:649: in polyfit
+    raise TypeError("expected x and y to have same length")
+E   TypeError: expected x and y to have same length
+=========================== short test summary info ===========================
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_primary_drying_endpoint_normal - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_endpoint_normal - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_primary_drying_boundary_threshold - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_secondary_drying_boundary_oscillating - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_savitzky_golay_smoothing - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestFirstDerivativeDetector::test_consecutive_points_required - TypeError: expected x and y to have same length
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_primary_drying_prt_normal - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_secondary_drying_prt_normal - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_boundary_threshold - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_in_progress - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_prt_too_frequent - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_linear_regression_accuracy - NameError: name 'time' is not defined. Did you forget to import 'time'?
+FAILED tests/test_endpoint_detection.py::TestCycleTimeReduction::test_combined_decision_reduces_cycle - TypeError: expected x and y to have same length
+======================== 13 failed, 7 passed in 0.56s =========================
+
+
+============================================================
+Running: tests/test_defrost_optimization.py
+============================================================
+
+============================= test session starts =============================
+collecting ... collected 18 items
+
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_normal FAILED [  5%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_no_frost FAILED [ 11%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_heavy_frost PASSED [ 16%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_boundary_max FAILED [ 22%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_insufficient_data PASSED [ 27%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thermal_resistance_vs_empirical FAILED [ 33%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_temperature_trend_calculation FAILED [ 38%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_normal_defrost_needed FAILED [ 44%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_no_defrost_needed PASSED [ 50%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_energy_saving_calculation FAILED [ 55%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_valley_electricity_preference PASSED [ 61%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_batch_running_block FAILED [ 66%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_min_interval_enforcement PASSED [ 72%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_max_interval_enforcement PASSED [ 77%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_adaptive_power_with_electricity_price PASSED [ 83%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_temperature_trend_trigger PASSED [ 88%]
+tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_cycle_optimization_over_time PASSED [ 94%]
+tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_power_profile_phases FAILED [100%]
+
+================================== FAILURES ===================================
+________ TestFrostThicknessEstimator.test_thickness_estimation_normal _________
+tests\test_defrost_optimization.py:51: in test_thickness_estimation_normal
+    assert 0.0 < thickness < 5.0
+E   assert 5.0 < 5.0
+_______ TestFrostThicknessEstimator.test_thickness_estimation_no_frost ________
+tests\test_defrost_optimization.py:66: in test_thickness_estimation_no_frost
+    assert thickness < 0.5
+E   assert np.float64(0.8888614482419281) < 0.5
+_____ TestFrostThicknessEstimator.test_thickness_estimation_boundary_max ______
+tests\test_defrost_optimization.py:95: in test_thickness_estimation_boundary_max
+    assert thickness == 5.0
+E   assert np.float64(3.6) == 5.0
+______ TestFrostThicknessEstimator.test_thermal_resistance_vs_empirical _______
+tests\test_defrost_optimization.py:134: in test_thermal_resistance_vs_empirical
+    assert abs(tr_thickness - emp_thickness) < 1.0
+E   assert np.float64(4.772400000000001) < 1.0
+E    +  where np.float64(4.772400000000001) = abs((5.0 - np.float64(0.22759999999999878)))
+_______ TestFrostThicknessEstimator.test_temperature_trend_calculation ________
+tests\test_defrost_optimization.py:144: in test_temperature_trend_calculation
+    assert abs(trend - expected_trend) < 0.5
+E   assert 7.200000029622336 < 0.5
+E    +  where 7.200000029622336 = abs((-3.6000000296223362 - 3.6))
+________ TestDefrostOptimizer.test_optimization_normal_defrost_needed _________
+tests\test_defrost_optimization.py:209: in test_optimization_normal_defrost_needed
+    assert need_defrost == True
+E   assert False == True
+_____________ TestDefrostOptimizer.test_energy_saving_calculation _____________
+tests\test_defrost_optimization.py:242: in test_energy_saving_calculation
+    assert frost_thickness > 2.0
+E   assert np.float64(1.8) > 2.0
+________________ TestDefrostOptimizer.test_batch_running_block ________________
+tests\test_defrost_optimization.py:284: in test_batch_running_block
+    assert need_defrost_idle == True
+E   assert False == True
+____________ TestDefrostCycleRationality.test_power_profile_phases ____________
+tests\test_defrost_optimization.py:477: in test_power_profile_phases
+    assert power == 0 or power <= 20.0
+E   assert (64.6 == 0 or 64.6 <= 20.0)
+=========================== short test summary info ===========================
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_normal - assert 5.0 < 5.0
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_no_frost - assert np.float64(0.8888614482419281) < 0.5
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_boundary_max - assert np.float64(3.6) == 5.0
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thermal_resistance_vs_empirical - assert np.float64(4.772400000000001) < 1.0
+ +  where np.float64(4.772400000000001) = abs((5.0 - np.float64(0.22759999999999878)))
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_temperature_trend_calculation - assert 7.200000029622336 < 0.5
+ +  where 7.200000029622336 = abs((-3.6000000296223362 - 3.6))
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_normal_defrost_needed - assert False == True
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_energy_saving_calculation - assert np.float64(1.8) > 2.0
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_batch_running_block - assert False == True
+FAILED tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_power_profile_phases - assert (64.6 == 0 or 64.6 <= 20.0)
+========================= 9 failed, 9 passed in 0.32s =========================
+
+
+============================================================
+Running: tests/test_fleet_control.py
+============================================================
+
+============================= test session starts =============================
+collecting ... collected 16 items
+
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_solver_initialization PASSED [  6%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_heuristic_solve_normal FAILED [ 12%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_electricity_price_response PASSED [ 18%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_optimization_vs_baseline FAILED [ 25%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_no_available_devices PASSED [ 31%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_exceed_time_horizon PASSED [ 37%]
+tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_single_device_scheduling PASSED [ 43%]
+tests/test_fleet_control.py::TestMultiDeviceConstraints::test_max_concurrent_constraint FAILED [ 50%]
+tests/test_fleet_control.py::TestMultiDeviceConstraints::test_device_priority_ordering PASSED [ 56%]
+tests/test_fleet_control.py::TestMultiDeviceConstraints::test_mixed_device_states PASSED [ 62%]
+tests/test_fleet_control.py::TestMultiDeviceConstraints::test_zero_batches PASSED [ 68%]
+tests/test_fleet_control.py::TestSolverPerformance::test_solve_speed PASSED [ 75%]
+tests/test_fleet_control.py::TestSolverPerformance::test_scalability_10_devices PASSED [ 81%]
+tests/test_fleet_control.py::TestSolverPerformance::test_electricity_price_schedule_generation PASSED [ 87%]
+tests/test_fleet_control.py::TestScheduleValidation::test_schedule_batch_consistency PASSED [ 93%]
+tests/test_fleet_control.py::TestScheduleValidation::test_schedule_no_overlap PASSED [100%]
+
+================================== FAILURES ===================================
+__________ TestIntegerProgrammingSolver.test_heuristic_solve_normal ___________
+tests\test_fleet_control.py:87: in test_heuristic_solve_normal
+    assert total_cost > 0
+E   assert 0.0 > 0
+---------------------------- Captured stdout setup ----------------------------
+[FleetController] 警告: PuLP未安装，使用启发式算法
+_________ TestIntegerProgrammingSolver.test_optimization_vs_baseline __________
+tests\test_fleet_control.py:138: in test_optimization_vs_baseline
+    assert optimized_cost <= baseline_cost
+E   assert 926.6666666666666 <= 586.6666666666666
+---------------------------- Captured stdout setup ----------------------------
+[FleetController] 警告: PuLP未安装，使用启发式算法
+__________ TestMultiDeviceConstraints.test_max_concurrent_constraint __________
+tests\test_fleet_control.py:255: in test_max_concurrent_constraint
+    assert max_concurrent_seen <= max_concurrent
+E   assert 10 <= 5
+---------------------------- Captured stdout setup ----------------------------
+[FleetController] 警告: PuLP未安装，使用启发式算法
+=========================== short test summary info ===========================
+FAILED tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_heuristic_solve_normal - assert 0.0 > 0
+FAILED tests/test_fleet_control.py::TestIntegerProgrammingSolver::test_optimization_vs_baseline - assert 926.6666666666666 <= 586.6666666666666
+FAILED tests/test_fleet_control.py::TestMultiDeviceConstraints::test_max_concurrent_constraint - assert 10 <= 5
+======================== 3 failed, 13 passed in 0.33s =========================
+
+
+============================================================
+Running: tests/test_defect_detection.py
+============================================================
+
+============================= test session starts =============================
+collecting ... collected 36 items
+
+tests/test_defect_detection.py::TestImagePreprocessor::test_load_image_normal PASSED [  2%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_normal PASSED [  5%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_low_resolution PASSED [  8%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_too_bright PASSED [ 11%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_too_dark PASSED [ 13%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_blurry PASSED [ 16%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_blurriness_calculation PASSED [ 19%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_preprocess_normal PASSED [ 22%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_preprocess_different_sizes PASSED [ 25%]
+tests/test_defect_detection.py::TestImagePreprocessor::test_quality_check_disabled PASSED [ 27%]
+tests/test_defect_detection.py::TestSEBlock::test_se_block_forward FAILED [ 30%]
+tests/test_defect_detection.py::TestSEBlock::test_se_block_attention_weights PASSED [ 33%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_model_initialization PASSED [ 36%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_forward_pass_normal FAILED [ 38%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_predict_normal FAILED [ 41%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_forward_pass_batch FAILED [ 44%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_training_mode_dropout FAILED [ 47%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_conv2d_correctness PASSED [ 50%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_batch_norm PASSED [ 52%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_classification_accuracy FAILED [ 55%]
+tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_attention_enabled_vs_disabled FAILED [ 58%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_nms_normal PASSED [ 61%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_nms_disabled PASSED [ 63%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_iou_calculation PASSED [ 66%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_bbox_smoothing PASSED [ 69%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_bbox_smoothing_no_prev PASSED [ 72%]
+tests/test_defect_detection.py::TestDefectPostProcessor::test_clustering PASSED [ 75%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_detect_image_normal ERROR [ 77%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_detect_with_known_defect_patterns ERROR [ 80%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_low_quality_image_rejection ERROR [ 83%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_confidence_threshold ERROR [ 86%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_batch_processing ERROR [ 88%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_defect_and_drying_curve_correlation ERROR [ 91%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_batch_traceability ERROR [ 94%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_multiple_batch_traceability ERROR [ 97%]
+tests/test_defect_detection.py::TestDefectDetectorIntegration::test_review_workflow ERROR [100%]
+
+=================================== ERRORS ====================================
+__ ERROR at setup of TestDefectDetectorIntegration.test_detect_image_normal ___
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+_ ERROR at setup of TestDefectDetectorIntegration.test_detect_with_known_defect_patterns _
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+_ ERROR at setup of TestDefectDetectorIntegration.test_low_quality_image_rejection _
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+__ ERROR at setup of TestDefectDetectorIntegration.test_confidence_threshold __
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+____ ERROR at setup of TestDefectDetectorIntegration.test_batch_processing ____
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+_ ERROR at setup of TestDefectDetectorIntegration.test_defect_and_drying_curve_correlation _
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+___ ERROR at setup of TestDefectDetectorIntegration.test_batch_traceability ___
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+_ ERROR at setup of TestDefectDetectorIntegration.test_multiple_batch_traceability _
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+____ ERROR at setup of TestDefectDetectorIntegration.test_review_workflow _____
+tests\test_defect_detection.py:452: in config
+    cfg = DefectConfig(
+E   TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+================================== FAILURES ===================================
+______________________ TestSEBlock.test_se_block_forward ______________________
+tests\test_defect_detection.py:181: in test_se_block_forward
+    assert np.all(output >= 0)
+E   assert np.False_
+E    +  where np.False_ = <function all at 0x000001CC64E9ED70>(array([[[[-3.47033679e-01, -2.44166076e-01, -4.50118482e-01, ...,\n          -1.00926794e-01,  9.71532643e-01,  3.04982752e-01],\n         [ 2.72721410e-01, -3.18666756e-01,  6.33106232e-01, ...,\n          -4.54147488e-01,  3.35568339e-01, -1.27968401e-01],\n         [-4.16389965e-02, -6.46104932e-01,  2.19691932e-01, ...,\n          -1.63915977e-01,  5.28220296e-01,  2.59581864e-01],\n         ...,\n         [-5.52587032e-01,  5.59613168e-01,  7.08697200e-01, ...,\n           1.33106738e-01,  1.96622103e-01,  6.58621252e-01],\n         [-1.84896812e-01,  3.49611819e-01,  1.51140466e-02, ...,\n          -9.19731081e-01,  2.61417516e-02, -2.08788618e-01],\n         [ 1.40962541e-01, -1.60660699e-01,  6.34923339e-01, ...,\n           6.80603266e-01, -1.10744871e-01,  1.46790490e-01]],\n\n        [[ 1.34271935e-01, -6.19855285e-01,  3.20728391e-01, ...,\n          -1.55042097e-01,  8.23005855e-01,  3.93414468e-01],\n         [ 3.69005464e-02,  2.24153981e-01,  6.96083605e-02, ...,\n           6.10102639e-02,  1.00945401e+00, -8.15129578e-01],\n         [-7.15102911e-01,  5.45370162e-01,  2.76456922e-01, ...,\n          -1.66660175e-01,  6.68551996e-02, -5.21519175e-03],\n         ...,\n         [-1.33700237e-01, -3.88558805e-01,  4.23980385e-01, ...,\n          -4.41541731e-01, -2.61533797e-01, -6.48016810e-01],\n         [ 1.10358395e-01,  6.10358000e-01,  1.57067299e-01, ...,\n          -2.56772399e-01, -4.70191181e-01, -8.25271308e-01],\n         [ 3.01050418e-03,  1.60560131e-01,  1.22501242e+00, ...,\n          -2.86696672e-01,  1.02006042e+00, -8.27293694e-01]],\n\n        [[-4.95234579e-01, -9.17522907e-01, -4.31285538e-02, ...,\n          -3.32969368e-01, -3.07766080e-01, -6.72580719e-01],\n         [ 5.21722138e-01,  5.34492195e-01,  2.42738370e-02, ...,\n          -3.73726189e-01, -1.06666064e+00,  1.14112988e-01],\n         [-8.25289905e-01,  8.47067297e-01, -1.25907734e-01, ...,\n           6.02470152e-02,  1.28614461e+00, -2.86467634e-02],\n         ...,\n         [ 1.00838506e+00, -8.03460300e-01, -4.02041286e-01, ...,\n          -3.56619120e-01, -2.24934489e-01,  1.71093330e-01],\n         [-6.61251903e-01,  4.17107493e-01,  2.74876595e-01, ...,\n          -3.04452121e-01, -2.02318102e-01,  3.79350603e-01],\n         [-4.33202744e-01, -6.69023573e-01,  5.83369136e-01, ...,\n           1.04060993e-01, -3.35950673e-01,  3.02531775e-02]],\n\n        ...,\n\n        [[ 1.34254858e-01,  6.96411967e-01, -4.93863463e-01, ...,\n          -1.22492537e-01, -3.19802687e-02,  6.68570638e-01],\n         [-3.32602933e-02,  1.59941450e-01, -9.33227688e-02, ...,\n          -4.46188390e-01, -5.13229430e-01, -1.99289113e-01],\n         [-9.04993713e-01, -2.06818730e-01, -3.50085109e-01, ...,\n          -8.54489326e-01,  1.76199913e-01,  1.80505559e-01],\n         ...,\n         [ 7.39517927e-01, -5.62630117e-01, -6.19779527e-01, ...,\n           1.57087892e-02, -4.48260665e-01,  3.26450735e-01],\n         [-4.66054976e-01, -1.01475567e-01,  6.93169355e-01, ...,\n          -7.28781164e-01, -7.41662145e-01,  2.88138986e-01],\n         [-1.84278131e-01,  2.67882973e-01, -2.82296300e-01, ...,\n          -3.63430172e-01, -2.76826859e-01, -3.91175896e-01]],\n\n        [[ 2.75462091e-01,  5.84399879e-01,  3.18329632e-01, ...,\n           3.99022520e-01, -1.29392356e-01,  5.97423315e-01],\n         [ 9.87070706e-03,  1.32642239e-01,  1.59314466e+00, ...,\n           4.28305477e-01, -9.46528316e-02, -2.21436501e-01],\n         [-4.40303504e-01, -1.08963597e+00, -4.67783004e-01, ...,\n           3.55128258e-01, -8.34049702e-01, -5.91762304e-01],\n         ...,\n         [ 3.52214068e-01, -7.77889431e-01,  3.51290613e-01, ...,\n           3.55508715e-01, -2.85546124e-01,  9.13933635e-01],\n         [-2.50658125e-01,  4.56390947e-01, -3.61700922e-01, ...,\n          -2.54976749e-01, -1.57523379e-01, -4.25784886e-01],\n         [-2.66692370e-01,  2.23598123e-01, -5.51164523e-02, ...,\n          -1.73185468e-01, -8.97134691e-02,  5.36978006e-01]],\n\n        [[ 2.12914452e-01,  4.10939120e-02,  7.86441378e-03, ...,\n          -2.70377606e-01,  3.95154774e-01,  2.55904824e-01],\n         [ 6.53553367e-01,  1.02454805e+00,  6.42424762e-01, ...,\n           5.33796012e-01, -4.91600692e-01, -2.61902899e-01],\n         [ 4.00322117e-02, -2.26748854e-01, -3.02488990e-02, ...,\n          -1.48605347e-01,  5.83654642e-01,  3.75546701e-02],\n         ...,\n         [ 5.88597357e-01, -7.32478499e-02, -6.33728504e-01, ...,\n           4.71711665e-01, -3.47547472e-01, -6.05764806e-01],\n         [-1.22796285e+00,  1.42268553e-01,  1.81205302e-01, ...,\n           2.11541995e-01, -2.55944222e-01,  5.64029753e-01],\n         [ 1.48258245e+00,  1.21387923e-02,  8.21567357e-01, ...,\n           5.80202881e-03,  5.82984447e-01, -5.23889422e-01]]],\n\n\n       [[[-4.67782557e-01,  5.75679354e-02,  6.86400011e-03, ...,\n          -2.99916774e-01, -2.71573663e-01, -3.45004201e-01],\n         [ 5.45158386e-01,  7.05622137e-01, -3.17354053e-01, ...,\n          -1.42317444e-01,  1.40664950e-01, -5.32957196e-01],\n         [ 1.00012258e-01, -6.13182783e-01, -8.99885356e-01, ...,\n           2.17215464e-01,  7.96240628e-01, -1.31641537e-01],\n         ...,\n         [ 5.61814010e-01,  8.19629788e-01, -3.37978154e-01, ...,\n           8.25524330e-02, -3.54549676e-01, -3.74105185e-01],\n         [-1.01749408e+00,  2.99438655e-01,  1.12829946e-01, ...,\n           6.09644115e-01, -4.15257096e-01, -5.23020141e-02],\n         [-9.95243609e-01,  4.39883322e-01,  6.32975638e-01, ...,\n           4.75869700e-02,  3.21200758e-01,  9.89960611e-01]],\n\n        [[-3.91474754e-01,  3.36496711e-01, -5.97324073e-01, ...,\n          -2.00141326e-01,  1.49134859e-01, -4.22026217e-01],\n         [ 1.19261473e-01, -5.43784462e-02,  5.12080640e-02, ...,\n          -5.65186977e-01, -2.93847799e-01, -6.21145785e-01],\n         [-6.36140704e-01, -3.00587386e-01,  2.01503828e-01, ...,\n           6.23852052e-02, -5.00720322e-01, -1.18509166e-01],\n         ...,\n         [-1.19288415e-02, -7.18693554e-01,  6.94507539e-01, ...,\n           3.47950645e-02,  4.46456701e-01, -3.63318563e-01],\n         [ 2.56535690e-02,  2.61819571e-01, -1.60623610e-01, ...,\n          -4.18383986e-01, -1.29410207e-01, -9.48391676e-01],\n         [-4.38570827e-01,  1.81629419e-01,  1.64866559e-02, ...,\n          -9.86232758e-01, -4.04747367e-01,  1.20290600e-01]],\n\n        [[ 5.90624690e-01,  9.31206867e-02, -3.33726674e-01, ...,\n           6.21151507e-01, -4.53501642e-01,  4.02265191e-01],\n         [-1.48916349e-01, -5.13966203e-01, -2.08322657e-03, ...,\n          -2.53788501e-01, -4.81415331e-01, -3.14240307e-01],\n         [-7.38161206e-01,  1.31178007e-01, -3.41580585e-02, ...,\n          -3.70964676e-01, -9.59201604e-02, -3.78539503e-01],\n         ...,\n         [-3.10734987e-01, -7.77507126e-02,  3.85052294e-01, ...,\n          -8.65068436e-02, -3.31548780e-01, -4.80990916e-01],\n         [-7.22702406e-03, -6.06949210e-01,  1.62279439e+00, ...,\n           4.57173824e-01, -2.68186718e-01,  8.46380666e-02],\n         [ 3.98831785e-01,  7.97625065e-01, -8.90263796e-01, ...,\n          -8.10854137e-02,  1.15702346e-01, -5.64104736e-01]],\n\n        ...,\n\n        [[ 2.71909863e-01, -7.04505920e-01, -4.05530989e-01, ...,\n           1.35304302e-01,  2.67068744e-02,  4.62073773e-01],\n         [-8.61957550e-01, -4.59332228e-01,  6.62867904e-01, ...,\n          -6.93920076e-01, -7.51148388e-02,  3.20455700e-01],\n         [ 4.59190279e-01, -6.46572351e-01, -1.05332971e+00, ...,\n           1.08736444e+00, -2.08292350e-01,  4.73801643e-01],\n         ...,\n         [ 3.47480886e-02,  8.83313596e-01,  2.83906609e-01, ...,\n           1.81250989e-01, -4.96481284e-02, -3.51733506e-01],\n         [-1.29595563e-01, -1.40939400e-01,  8.16222653e-02, ...,\n          -1.66810974e-01,  8.72966468e-01, -6.97501302e-01],\n         [ 1.22526199e-01,  4.23130184e-01, -2.68365622e-01, ...,\n           9.66954976e-02,  1.32933806e-03, -3.31541777e-01]],\n\n        [[ 1.09914064e-01, -7.65674949e-01, -5.41783154e-01, ...,\n           9.51771975e-01, -2.34469086e-01,  7.74672866e-01],\n         [ 6.71026289e-01,  2.22061455e-01, -7.65521526e-01, ...,\n           1.72229946e-01,  1.07315242e-01, -5.33962727e-01],\n         [ 5.16767949e-02,  1.18897043e-01,  2.08711550e-01, ...,\n          -1.17577679e-01,  7.07999349e-01,  1.39262736e-01],\n         ...,\n         [-4.03592676e-01,  8.63525942e-02, -2.20685136e-02, ...,\n          -3.12321037e-01, -1.56334531e+00,  2.40808845e-01],\n         [ 1.32644331e+00,  3.96211371e-02, -3.95985901e-01, ...,\n           3.34153861e-01, -6.11272275e-01,  1.18550152e-01],\n         [-6.28430545e-01,  4.80549671e-02, -1.22040391e+00, ...,\n          -3.20838727e-02,  7.29136169e-01,  4.77043726e-02]],\n\n        [[-5.36767602e-01, -1.70918196e-01, -3.71883879e-03, ...,\n          -1.68045629e-02, -6.85850441e-01,  1.86464474e-01],\n         [-4.86311436e-01,  5.23143053e-01,  8.71311426e-01, ...,\n           2.96721876e-01, -1.26462102e-01, -8.42902482e-01],\n         [-6.47108480e-02, -1.57238200e-01,  2.92389859e-02, ...,\n          -6.12449110e-01,  1.02987111e-01, -3.40182662e-01],\n         ...,\n         [ 4.33446378e-01, -2.91647553e-01,  7.92122364e-01, ...,\n           3.20430822e-03,  1.95757344e-01, -2.07584709e-01],\n         [ 1.04882374e-01,  8.38069797e-01, -7.22938180e-01, ...,\n          -6.72041059e-01, -8.53999972e-01,  1.95792187e-02],\n         [-1.02563727e+00,  1.39259160e-01, -1.17023897e+00, ...,\n          -3.79525125e-02, -9.94290531e-01,  1.88853204e-01]]]],\n      shape=(2, 128, 28, 28), dtype=float32) >= 0)
+E    +    where <function all at 0x000001CC64E9ED70> = np.all
+_____________ TestSimplifiedEfficientNet.test_forward_pass_normal _____________
+tests\test_defect_detection.py:241: in test_forward_pass_normal
+    output = model.forward(x, training=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+_______________ TestSimplifiedEfficientNet.test_predict_normal ________________
+tests\test_defect_detection.py:251: in test_predict_normal
+    class_idx, confidence, logits = model.predict(x)
+                                    ^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:411: in predict
+    logits = self.forward(x, training=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+_____________ TestSimplifiedEfficientNet.test_forward_pass_batch ______________
+tests\test_defect_detection.py:262: in test_forward_pass_batch
+    output = model.forward(x, training=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+____________ TestSimplifiedEfficientNet.test_training_mode_dropout ____________
+tests\test_defect_detection.py:272: in test_training_mode_dropout
+    outputs_train.append(model.forward(x, training=True))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+___________ TestSimplifiedEfficientNet.test_classification_accuracy ___________
+tests\test_defect_detection.py:313: in test_classification_accuracy
+    pred_idx, _, _ = model.predict(x)
+                     ^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:411: in predict
+    logits = self.forward(x, training=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+________ TestSimplifiedEfficientNet.test_attention_enabled_vs_disabled ________
+tests\test_defect_detection.py:330: in test_attention_enabled_vs_disabled
+    out_with = model_with_attention.forward(x)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+microservices\defect_detector\main.py:394: in forward
+    x = x @ self.fc1
+        ^^^^^^^^^^^^
+E   ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+=========================== short test summary info ===========================
+FAILED tests/test_defect_detection.py::TestSEBlock::test_se_block_forward - assert np.False_
+ +  where np.False_ = <function all at 0x000001CC64E9ED70>(array([[[[-3.47033679e-01, -2.44166076e-01, -4.50118482e-01, ...,\n          -1.00926794e-01,  9.71532643e-01,  3.04982752e-01],\n         [ 2.72721410e-01, -3.18666756e-01,  6.33106232e-01, ...,\n          -4.54147488e-01,  3.35568339e-01, -1.27968401e-01],\n         [-4.16389965e-02, -6.46104932e-01,  2.19691932e-01, ...,\n          -1.63915977e-01,  5.28220296e-01,  2.59581864e-01],\n         ...,\n         [-5.52587032e-01,  5.59613168e-01,  7.08697200e-01, ...,\n           1.33106738e-01,  1.96622103e-01,  6.58621252e-01],\n         [-1.84896812e-01,  3.49611819e-01,  1.51140466e-02, ...,\n          -9.19731081e-01,  2.61417516e-02, -2.08788618e-01],\n         [ 1.40962541e-01, -1.60660699e-01,  6.34923339e-01, ...,\n           6.80603266e-01, -1.10744871e-01,  1.46790490e-01]],\n\n        [[ 1.34271935e-01, -6.19855285e-01,  3.20728391e-01, ...,\n          -1.55042097e-01,  8.23005855e-01,  3.93414468e-01],\n         [ 3.69005464e-02,  2.24153981e-01,  6.96083605e-02, ...,\n           6.10102639e-02,  1.00945401e+00, -8.15129578e-01],\n         [-7.15102911e-01,  5.45370162e-01,  2.76456922e-01, ...,\n          -1.66660175e-01,  6.68551996e-02, -5.21519175e-03],\n         ...,\n         [-1.33700237e-01, -3.88558805e-01,  4.23980385e-01, ...,\n          -4.41541731e-01, -2.61533797e-01, -6.48016810e-01],\n         [ 1.10358395e-01,  6.10358000e-01,  1.57067299e-01, ...,\n          -2.56772399e-01, -4.70191181e-01, -8.25271308e-01],\n         [ 3.01050418e-03,  1.60560131e-01,  1.22501242e+00, ...,\n          -2.86696672e-01,  1.02006042e+00, -8.27293694e-01]],\n\n        [[-4.95234579e-01, -9.17522907e-01, -4.31285538e-02, ...,\n          -3.32969368e-01, -3.07766080e-01, -6.72580719e-01],\n         [ 5.21722138e-01,  5.34492195e-01,  2.42738370e-02, ...,\n          -3.73726189e-01, -1.06666064e+00,  1.14112988e-01],\n         [-8.25289905e-01,  8.47067297e-01, -1.25907734e-01, ...,\n           6.02470152e-02,  1.28614461e+00, -2.86467634e-02],\n         ...,\n         [ 1.00838506e+00, -8.03460300e-01, -4.02041286e-01, ...,\n          -3.56619120e-01, -2.24934489e-01,  1.71093330e-01],\n         [-6.61251903e-01,  4.17107493e-01,  2.74876595e-01, ...,\n          -3.04452121e-01, -2.02318102e-01,  3.79350603e-01],\n         [-4.33202744e-01, -6.69023573e-01,  5.83369136e-01, ...,\n           1.04060993e-01, -3.35950673e-01,  3.02531775e-02]],\n\n        ...,\n\n        [[ 1.34254858e-01,  6.96411967e-01, -4.93863463e-01, ...,\n          -1.22492537e-01, -3.19802687e-02,  6.68570638e-01],\n         [-3.32602933e-02,  1.59941450e-01, -9.33227688e-02, ...,\n          -4.46188390e-01, -5.13229430e-01, -1.99289113e-01],\n         [-9.04993713e-01, -2.06818730e-01, -3.50085109e-01, ...,\n          -8.54489326e-01,  1.76199913e-01,  1.80505559e-01],\n         ...,\n         [ 7.39517927e-01, -5.62630117e-01, -6.19779527e-01, ...,\n           1.57087892e-02, -4.48260665e-01,  3.26450735e-01],\n         [-4.66054976e-01, -1.01475567e-01,  6.93169355e-01, ...,\n          -7.28781164e-01, -7.41662145e-01,  2.88138986e-01],\n         [-1.84278131e-01,  2.67882973e-01, -2.82296300e-01, ...,\n          -3.63430172e-01, -2.76826859e-01, -3.91175896e-01]],\n\n        [[ 2.75462091e-01,  5.84399879e-01,  3.18329632e-01, ...,\n           3.99022520e-01, -1.29392356e-01,  5.97423315e-01],\n         [ 9.87070706e-03,  1.32642239e-01,  1.59314466e+00, ...,\n           4.28305477e-01, -9.46528316e-02, -2.21436501e-01],\n         [-4.40303504e-01, -1.08963597e+00, -4.67783004e-01, ...,\n           3.55128258e-01, -8.34049702e-01, -5.91762304e-01],\n         ...,\n         [ 3.52214068e-01, -7.77889431e-01,  3.51290613e-01, ...,\n           3.55508715e-01, -2.85546124e-01,  9.13933635e-01],\n         [-2.50658125e-01,  4.56390947e-01, -3.61700922e-01, ...,\n          -2.54976749e-01, -1.57523379e-01, -4.25784886e-01],\n         [-2.66692370e-01,  2.23598123e-01, -5.51164523e-02, ...,\n          -1.73185468e-01, -8.97134691e-02,  5.36978006e-01]],\n\n        [[ 2.12914452e-01,  4.10939120e-02,  7.86441378e-03, ...,\n          -2.70377606e-01,  3.95154774e-01,  2.55904824e-01],\n         [ 6.53553367e-01,  1.02454805e+00,  6.42424762e-01, ...,\n           5.33796012e-01, -4.91600692e-01, -2.61902899e-01],\n         [ 4.00322117e-02, -2.26748854e-01, -3.02488990e-02, ...,\n          -1.48605347e-01,  5.83654642e-01,  3.75546701e-02],\n         ...,\n         [ 5.88597357e-01, -7.32478499e-02, -6.33728504e-01, ...,\n           4.71711665e-01, -3.47547472e-01, -6.05764806e-01],\n         [-1.22796285e+00,  1.42268553e-01,  1.81205302e-01, ...,\n           2.11541995e-01, -2.55944222e-01,  5.64029753e-01],\n         [ 1.48258245e+00,  1.21387923e-02,  8.21567357e-01, ...,\n           5.80202881e-03,  5.82984447e-01, -5.23889422e-01]]],\n\n\n       [[[-4.67782557e-01,  5.75679354e-02,  6.86400011e-03, ...,\n          -2.99916774e-01, -2.71573663e-01, -3.45004201e-01],\n         [ 5.45158386e-01,  7.05622137e-01, -3.17354053e-01, ...,\n          -1.42317444e-01,  1.40664950e-01, -5.32957196e-01],\n         [ 1.00012258e-01, -6.13182783e-01, -8.99885356e-01, ...,\n           2.17215464e-01,  7.96240628e-01, -1.31641537e-01],\n         ...,\n         [ 5.61814010e-01,  8.19629788e-01, -3.37978154e-01, ...,\n           8.25524330e-02, -3.54549676e-01, -3.74105185e-01],\n         [-1.01749408e+00,  2.99438655e-01,  1.12829946e-01, ...,\n           6.09644115e-01, -4.15257096e-01, -5.23020141e-02],\n         [-9.95243609e-01,  4.39883322e-01,  6.32975638e-01, ...,\n           4.75869700e-02,  3.21200758e-01,  9.89960611e-01]],\n\n        [[-3.91474754e-01,  3.36496711e-01, -5.97324073e-01, ...,\n          -2.00141326e-01,  1.49134859e-01, -4.22026217e-01],\n         [ 1.19261473e-01, -5.43784462e-02,  5.12080640e-02, ...,\n          -5.65186977e-01, -2.93847799e-01, -6.21145785e-01],\n         [-6.36140704e-01, -3.00587386e-01,  2.01503828e-01, ...,\n           6.23852052e-02, -5.00720322e-01, -1.18509166e-01],\n         ...,\n         [-1.19288415e-02, -7.18693554e-01,  6.94507539e-01, ...,\n           3.47950645e-02,  4.46456701e-01, -3.63318563e-01],\n         [ 2.56535690e-02,  2.61819571e-01, -1.60623610e-01, ...,\n          -4.18383986e-01, -1.29410207e-01, -9.48391676e-01],\n         [-4.38570827e-01,  1.81629419e-01,  1.64866559e-02, ...,\n          -9.86232758e-01, -4.04747367e-01,  1.20290600e-01]],\n\n        [[ 5.90624690e-01,  9.31206867e-02, -3.33726674e-01, ...,\n           6.21151507e-01, -4.53501642e-01,  4.02265191e-01],\n         [-1.48916349e-01, -5.13966203e-01, -2.08322657e-03, ...,\n          -2.53788501e-01, -4.81415331e-01, -3.14240307e-01],\n         [-7.38161206e-01,  1.31178007e-01, -3.41580585e-02, ...,\n          -3.70964676e-01, -9.59201604e-02, -3.78539503e-01],\n         ...,\n         [-3.10734987e-01, -7.77507126e-02,  3.85052294e-01, ...,\n          -8.65068436e-02, -3.31548780e-01, -4.80990916e-01],\n         [-7.22702406e-03, -6.06949210e-01,  1.62279439e+00, ...,\n           4.57173824e-01, -2.68186718e-01,  8.46380666e-02],\n         [ 3.98831785e-01,  7.97625065e-01, -8.90263796e-01, ...,\n          -8.10854137e-02,  1.15702346e-01, -5.64104736e-01]],\n\n        ...,\n\n        [[ 2.71909863e-01, -7.04505920e-01, -4.05530989e-01, ...,\n           1.35304302e-01,  2.67068744e-02,  4.62073773e-01],\n         [-8.61957550e-01, -4.59332228e-01,  6.62867904e-01, ...,\n          -6.93920076e-01, -7.51148388e-02,  3.20455700e-01],\n         [ 4.59190279e-01, -6.46572351e-01, -1.05332971e+00, ...,\n           1.08736444e+00, -2.08292350e-01,  4.73801643e-01],\n         ...,\n         [ 3.47480886e-02,  8.83313596e-01,  2.83906609e-01, ...,\n           1.81250989e-01, -4.96481284e-02, -3.51733506e-01],\n         [-1.29595563e-01, -1.40939400e-01,  8.16222653e-02, ...,\n          -1.66810974e-01,  8.72966468e-01, -6.97501302e-01],\n         [ 1.22526199e-01,  4.23130184e-01, -2.68365622e-01, ...,\n           9.66954976e-02,  1.32933806e-03, -3.31541777e-01]],\n\n        [[ 1.09914064e-01, -7.65674949e-01, -5.41783154e-01, ...,\n           9.51771975e-01, -2.34469086e-01,  7.74672866e-01],\n         [ 6.71026289e-01,  2.22061455e-01, -7.65521526e-01, ...,\n           1.72229946e-01,  1.07315242e-01, -5.33962727e-01],\n         [ 5.16767949e-02,  1.18897043e-01,  2.08711550e-01, ...,\n          -1.17577679e-01,  7.07999349e-01,  1.39262736e-01],\n         ...,\n         [-4.03592676e-01,  8.63525942e-02, -2.20685136e-02, ...,\n          -3.12321037e-01, -1.56334531e+00,  2.40808845e-01],\n         [ 1.32644331e+00,  3.96211371e-02, -3.95985901e-01, ...,\n           3.34153861e-01, -6.11272275e-01,  1.18550152e-01],\n         [-6.28430545e-01,  4.80549671e-02, -1.22040391e+00, ...,\n          -3.20838727e-02,  7.29136169e-01,  4.77043726e-02]],\n\n        [[-5.36767602e-01, -1.70918196e-01, -3.71883879e-03, ...,\n          -1.68045629e-02, -6.85850441e-01,  1.86464474e-01],\n         [-4.86311436e-01,  5.23143053e-01,  8.71311426e-01, ...,\n           2.96721876e-01, -1.26462102e-01, -8.42902482e-01],\n         [-6.47108480e-02, -1.57238200e-01,  2.92389859e-02, ...,\n          -6.12449110e-01,  1.02987111e-01, -3.40182662e-01],\n         ...,\n         [ 4.33446378e-01, -2.91647553e-01,  7.92122364e-01, ...,\n           3.20430822e-03,  1.95757344e-01, -2.07584709e-01],\n         [ 1.04882374e-01,  8.38069797e-01, -7.22938180e-01, ...,\n          -6.72041059e-01, -8.53999972e-01,  1.95792187e-02],\n         [-1.02563727e+00,  1.39259160e-01, -1.17023897e+00, ...,\n          -3.79525125e-02, -9.94290531e-01,  1.88853204e-01]]]],\n      shape=(2, 128, 28, 28), dtype=float32) >= 0)
+ +    where <function all at 0x000001CC64E9ED70> = np.all
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_forward_pass_normal - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_predict_normal - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_forward_pass_batch - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_training_mode_dropout - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_classification_accuracy - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+FAILED tests/test_defect_detection.py::TestSimplifiedEfficientNet::test_attention_enabled_vs_disabled - ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 100352 is different from 25088)
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_detect_image_normal - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_detect_with_known_defect_patterns - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_low_quality_image_rejection - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_confidence_threshold - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_batch_processing - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_defect_and_drying_curve_correlation - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_batch_traceability - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_multiple_batch_traceability - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+ERROR tests/test_defect_detection.py::TestDefectDetectorIntegration::test_review_workflow - TypeError: DefectConfig.__init__() got an unexpected keyword argument 'auto_review_threshold'
+=================== 7 failed, 20 passed, 9 errors in 54.48s ===================

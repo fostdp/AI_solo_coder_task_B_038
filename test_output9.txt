@@ -1,0 +1,43 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: d:\SOLO-2\AI_solo_coder_task_B_038
+configfile: pytest.ini
+plugins: anyio-3.7.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 1 item
+
+tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_primary_drying_prt_normal FAILED [100%]
+
+================================== FAILURES ===================================
+_________ TestPressureRiseTestManager.test_primary_drying_prt_normal __________
+
+self = <tests.test_endpoint_detection.TestPressureRiseTestManager object at 0x00000243846A8F50>
+prt_manager = <endpoint_detector.main.PressureRiseTestManager object at 0x00000243A69F9940>
+
+    def test_primary_drying_prt_normal(self, prt_manager):
+        """正常场景：一次干燥PRT - 冰升华导致压力快速上升"""
+        state = DeviceState(device_id=1, batch_id="TEST-001", current_phase="primary_drying")
+    
+>       prt_manager.start_test(state, 1.0)
+
+tests\test_endpoint_detection.py:304: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <endpoint_detector.main.PressureRiseTestManager object at 0x00000243A69F9940>
+device_state = DeviceState(device_id=1, batch_id='TEST-001', current_phase='primary_drying', phase_start_time=None, temp_history=dequ...e=None, prt_initial_pressure=None, prt_measurements=[], last_prt_time=0.0, training_data=[], autoencoder_trained=False)
+initial_pressure = 1.0
+
+    def start_test(self, device_state: DeviceState, initial_pressure: float) -> None:
+        """开始压力升测试"""
+        if not self.enabled:
+            return
+    
+>       now = time.time()
+              ^^^^
+E       NameError: name 'time' is not defined. Did you forget to import 'time'?
+
+microservices\endpoint_detector\main.py:283: NameError
+=========================== short test summary info ===========================
+FAILED tests/test_endpoint_detection.py::TestPressureRiseTestManager::test_primary_drying_prt_normal - NameError: name 'time' is not defined. Did you forget to import 'time'?
+============================== 1 failed in 0.26s ==============================

@@ -1,0 +1,80 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Users\y\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: d:\SOLO-2\AI_solo_coder_task_B_038
+configfile: pytest.ini
+plugins: anyio-3.7.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 18 items
+
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_normal FAILED [  5%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_no_frost FAILED [ 11%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_heavy_frost PASSED [ 16%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_boundary_max FAILED [ 22%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_insufficient_data PASSED [ 27%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thermal_resistance_vs_empirical FAILED [ 33%]
+tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_temperature_trend_calculation FAILED [ 38%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_normal_defrost_needed FAILED [ 44%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_no_defrost_needed PASSED [ 50%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_energy_saving_calculation FAILED [ 55%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_valley_electricity_preference PASSED [ 61%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_batch_running_block FAILED [ 66%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_min_interval_enforcement PASSED [ 72%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_max_interval_enforcement PASSED [ 77%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_adaptive_power_with_electricity_price PASSED [ 83%]
+tests/test_defrost_optimization.py::TestDefrostOptimizer::test_temperature_trend_trigger PASSED [ 88%]
+tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_cycle_optimization_over_time PASSED [ 94%]
+tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_power_profile_phases FAILED [100%]
+
+================================== FAILURES ===================================
+________ TestFrostThicknessEstimator.test_thickness_estimation_normal _________
+tests\test_defrost_optimization.py:51: in test_thickness_estimation_normal
+    assert 0.0 < thickness < 5.0
+E   assert 5.0 < 5.0
+_______ TestFrostThicknessEstimator.test_thickness_estimation_no_frost ________
+tests\test_defrost_optimization.py:66: in test_thickness_estimation_no_frost
+    assert thickness < 0.5
+E   assert 0.9873120350888569 < 0.5
+_____ TestFrostThicknessEstimator.test_thickness_estimation_boundary_max ______
+tests\test_defrost_optimization.py:95: in test_thickness_estimation_boundary_max
+    assert thickness == 5.0
+E   assert np.float64(3.6) == 5.0
+______ TestFrostThicknessEstimator.test_thermal_resistance_vs_empirical _______
+tests\test_defrost_optimization.py:134: in test_thermal_resistance_vs_empirical
+    assert abs(tr_thickness - emp_thickness) < 1.0
+E   assert np.float64(4.772400000000001) < 1.0
+E    +  where np.float64(4.772400000000001) = abs((5.0 - np.float64(0.22759999999999878)))
+_______ TestFrostThicknessEstimator.test_temperature_trend_calculation ________
+tests\test_defrost_optimization.py:144: in test_temperature_trend_calculation
+    assert abs(trend - expected_trend) < 0.5
+E   assert 7.200000074321388 < 0.5
+E    +  where 7.200000074321388 = abs((-3.6000000743213882 - 3.6))
+________ TestDefrostOptimizer.test_optimization_normal_defrost_needed _________
+tests\test_defrost_optimization.py:209: in test_optimization_normal_defrost_needed
+    assert need_defrost == True
+E   assert False == True
+_____________ TestDefrostOptimizer.test_energy_saving_calculation _____________
+tests\test_defrost_optimization.py:242: in test_energy_saving_calculation
+    assert frost_thickness > 2.0
+E   assert np.float64(1.8) > 2.0
+________________ TestDefrostOptimizer.test_batch_running_block ________________
+tests\test_defrost_optimization.py:284: in test_batch_running_block
+    assert need_defrost_idle == True
+E   assert False == True
+____________ TestDefrostCycleRationality.test_power_profile_phases ____________
+tests\test_defrost_optimization.py:477: in test_power_profile_phases
+    assert power == 0 or power <= 20.0
+E   assert (64.6 == 0 or 64.6 <= 20.0)
+=========================== short test summary info ===========================
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_normal - assert 5.0 < 5.0
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_no_frost - assert 0.9873120350888569 < 0.5
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thickness_estimation_boundary_max - assert np.float64(3.6) == 5.0
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_thermal_resistance_vs_empirical - assert np.float64(4.772400000000001) < 1.0
+ +  where np.float64(4.772400000000001) = abs((5.0 - np.float64(0.22759999999999878)))
+FAILED tests/test_defrost_optimization.py::TestFrostThicknessEstimator::test_temperature_trend_calculation - assert 7.200000074321388 < 0.5
+ +  where 7.200000074321388 = abs((-3.6000000743213882 - 3.6))
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_optimization_normal_defrost_needed - assert False == True
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_energy_saving_calculation - assert np.float64(1.8) > 2.0
+FAILED tests/test_defrost_optimization.py::TestDefrostOptimizer::test_batch_running_block - assert False == True
+FAILED tests/test_defrost_optimization.py::TestDefrostCycleRationality::test_power_profile_phases - assert (64.6 == 0 or 64.6 <= 20.0)
+========================= 9 failed, 9 passed in 0.47s =========================

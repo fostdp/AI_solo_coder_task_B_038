@@ -299,7 +299,7 @@ class SimplifiedEfficientNet:
         if self.use_attention:
             self.se_block = SEBlock(128)
         
-        self.fc1 = np.random.randn(128 * 28 * 28, 512).astype(np.float32) * 0.01
+        self.fc1 = np.random.randn(128 * 14 * 14, 512).astype(np.float32) * 0.01
         self.fc2 = np.random.randn(512, self.num_classes).astype(np.float32) * 0.01
 
     def _init_weights(self):
@@ -310,7 +310,7 @@ class SimplifiedEfficientNet:
         self.conv2 = np.random.randn(64, 32, 3, 3).astype(np.float32) * np.sqrt(2 / (32 * 3 * 3))
         self.conv3 = np.random.randn(128, 64, 3, 3).astype(np.float32) * np.sqrt(2 / (64 * 3 * 3))
         
-        self.fc1 = np.random.randn(128 * 28 * 28, 512).astype(np.float32) * np.sqrt(2 / (128 * 28 * 28))
+        self.fc1 = np.random.randn(128 * 14 * 14, 512).astype(np.float32) * np.sqrt(2 / (128 * 14 * 14))
         self.fc2 = np.random.randn(512, self.num_classes).astype(np.float32) * np.sqrt(2 / 512)
 
     def _conv2d(self, x: np.ndarray, weights: np.ndarray, stride: int = 2, padding: int = 1) -> np.ndarray:

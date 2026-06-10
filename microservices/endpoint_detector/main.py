@@ -11,6 +11,7 @@
 import asyncio
 import sys
 import os
+import time
 import numpy as np
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -79,13 +80,20 @@ class FirstDerivativeDetector:
             return y
         
         order = min(poly_order, window_size - 1)
-        half_window = window_size // 2
+        half_window = (window_size - 1) // 2
         
-        # 计算多项式系数
-        coeffs = np.zeros(window_size)
-        for i in range(window_size):
-            x = np.arange(-half_window, half_window + 1)
-            coeffs[i] = np.polyval(np.polyfit(x, y[i:i + window_size] if i + window_size <= len(y) else y[-window_size:], order), 0)
+        coeffs = np.zeros(len(y))
+        for i in range(len(y)):
+            start = max(0, i - half_window)
+            end = min(len(y), i + half_window + 1)
+            segment = y[start:end]
+            x = np.arange(len(segment)) - (i - start)
+            
+            if len(segment) >= order + 1:
+                poly_coeffs = np.polyfit(x, segment, order)
+                coeffs[i] = np.polyval(poly_coeffs, 0)
+            else:
+                coeffs[i] = y[i]
         
         return coeffs
     

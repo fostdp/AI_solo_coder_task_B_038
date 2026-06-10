@@ -85,30 +85,37 @@ class FrostThicknessEstimator:
         # 温度差越大，结霜越厚
         temp_diff = avg_temp - self.base_temp
         
-        # 厚度与温度差成正比（简化模型）
-        thickness = max(0.0, temp_diff * self.calibration_factor * 0.1)
+        # 厚度与温度差成正比（30℃温差对应5.0mm厚度）
+        thickness = max(0.0, temp_diff * self.calibration_factor * (5.0 / 36.0))
         
         # 趋势修正：温度上升越快，结霜越严重
         if temp_trend > 0:
-            thickness += temp_trend * 5.0
+            thickness += temp_trend * 2.0
         
         return min(thickness, self.max_thickness)
     
     def _empirical_method(self, times: np.ndarray, temps: np.ndarray) -> float:
-        """经验公式法"""
-        # 基于运行时间和温度的经验公式
+        """经验公式法（与热阻法基于相同原理）"""
+        # 计算平均温度和温度趋势
         avg_temp = np.mean(temps[-30:])
+        temp_trend = self._calculate_trend(times, temps)
         temp_std = np.std(temps[-30:])
         
-        # 经验公式：厚度 = 系数 * 温度偏差 * 时间因子
-        temp_deviation = max(0.0, avg_temp - self.base_temp)
-        runtime_factor = min(1.0, len(temps) / 360.0)  # 2小时数据归一化
+        # 温度差越大，结霜越厚（与热阻法相同的系数）
+        temp_diff = max(0.0, avg_temp - self.base_temp)
+        thickness = temp_diff * self.calibration_factor * (5.0 / 36.0)
         
-        thickness = temp_deviation * runtime_factor * self.calibration_factor * 0.08
+        # 趋势修正：温度上升越快，结霜越严重（与热阻法相同的系数）
+        if temp_trend > 0:
+            thickness += temp_trend * 1.0
         
         # 温度波动大表示结霜不稳定
         if temp_std > 1.0:
-            thickness *= 1.2
+            thickness *= 1.1
+        
+        # 时间因子：数据越多估算越准确
+        runtime_factor = min(1.0, len(temps) / 360.0)
+        thickness *= (0.8 + 0.2 * runtime_factor)
         
         return min(thickness, self.max_thickness)
     
@@ -120,6 +127,11 @@ class FrostThicknessEstimator:
         # 取最近60个点（10分钟）
         recent_times = times[-60:]
         recent_values = values[-60:]
+        
+        # 按时间排序（确保时间递增）
+        sorted_indices = np.argsort(recent_times)
+        recent_times = recent_times[sorted_indices]
+        recent_values = recent_values[sorted_indices]
         
         # 线性拟合
         dt = (recent_times - recent_times[0]) / 3600.0  # 转换为小时
@@ -156,6 +168,34 @@ class DefrostOptimizer:
             temp_trend = self.frost_estimator._calculate_trend(times, temps)
         else:
             temp_trend = 0.0
+        
+        # 如果除霜正在进行，根据阶段返回功率
+        if state.defrost_in_progress and state.defrost_phase:
+            phase = state.defrost_phase
+            if phase == 'cooldown':
+                return False, 12.0, 0.0, 0.0
+            
+            if phase == 'preheat':
+                recommended_power = self.power_profile.get('preheat_power_pct', 30.0)
+            elif phase == 'main_heating':
+                recommended_power = self.power_profile.get('main_heating_power_pct', 80.0)
+            elif phase == 'soak':
+                recommended_power = self.power_profile.get('soak_power_pct', 50.0)
+            else:
+                recommended_power = self._calculate_optimal_power(
+                    frost_thickness, temp_trend, electricity_price
+                )
+            
+            # 自适应功率调整
+            if self.power_profile.get('adaptive_power_enabled', True):
+                temp_diff = state.target_defrost_temp - state.current_cold_trap_temp
+                if temp_diff > 20.0:
+                    recommended_power *= 1.2
+                elif temp_diff < 5.0:
+                    recommended_power *= 0.8
+                recommended_power = min(recommended_power, self.power_profile.get('max_power_pct', 80.0))
+            
+            return False, 12.0, recommended_power, 0.0
         
         # 判断是否需要除霜
         need_defrost = self._check_defrost_needed(state, frost_thickness, temp_trend)
