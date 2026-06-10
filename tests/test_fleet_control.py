@@ -7,6 +7,7 @@
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "microservices"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
 import numpy as np
@@ -14,13 +15,8 @@ import time
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List
 
-from fleet_controller.main import (
-    IntegerProgrammingSolver,
-    DeviceState,
-    ScheduledBatch,
-    TimeSlot,
-)
-from shared import FleetConfig
+from modules.cluster_scheduler import IntegerProgrammingSolver, SolverConfig
+from fleet_controller.main import DeviceState, ScheduledBatch, TimeSlot
 
 
 class TestIntegerProgrammingSolver:
@@ -28,9 +24,7 @@ class TestIntegerProgrammingSolver:
 
     @pytest.fixture
     def config(self):
-        return FleetConfig(
-            enabled=True,
-            schedule_interval_minutes=60,
+        return SolverConfig(
             optimization={
                 'time_resolution_minutes': 30,
                 'max_solve_time_seconds': 10,
@@ -45,20 +39,19 @@ class TestIntegerProgrammingSolver:
                     'flat_hours': [6, 7, 12, 13, 22, 23],
                 }
             },
-            device_priorities={},
             constraints={
                 'max_concurrent_devices': 10,
                 'min_batch_interval_minutes': 30,
                 'maintenance_hours_per_week': 4,
             },
+            freeze_profiles=[
+                {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 80, 'priority': 1},
+                {'formula_id': 'FORMULA-002', 'primary_drying_hours': 12, 'secondary_drying_hours': 6, 'energy_kwh': 150, 'priority': 2},
+            ],
         )
 
     @pytest.fixture
     def solver(self, config):
-        config.__dict__['freeze_profiles'] = [
-            {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 80, 'priority': 1},
-            {'formula_id': 'FORMULA-002', 'primary_drying_hours': 12, 'secondary_drying_hours': 6, 'energy_kwh': 150, 'priority': 2},
-        ]
         return IntegerProgrammingSolver(config)
 
     @pytest.fixture
@@ -191,9 +184,7 @@ class TestMultiDeviceConstraints:
 
     @pytest.fixture
     def config(self):
-        return FleetConfig(
-            enabled=True,
-            schedule_interval_minutes=60,
+        return SolverConfig(
             optimization={
                 'time_resolution_minutes': 30,
                 'max_solve_time_seconds': 10,
@@ -209,13 +200,13 @@ class TestMultiDeviceConstraints:
                 'max_concurrent_devices': 5,
                 'min_batch_interval_minutes': 30,
             },
+            freeze_profiles=[
+                {'formula_id': 'FORMULA-001', 'primary_drying_hours': 4, 'secondary_drying_hours': 2, 'energy_kwh': 50, 'priority': 1},
+            ],
         )
 
     @pytest.fixture
     def solver(self, config):
-        config.__dict__['freeze_profiles'] = [
-            {'formula_id': 'FORMULA-001', 'primary_drying_hours': 4, 'secondary_drying_hours': 2, 'energy_kwh': 50, 'priority': 1},
-        ]
         return IntegerProgrammingSolver(config)
 
     @pytest.fixture
@@ -304,9 +295,7 @@ class TestSolverPerformance:
 
     @pytest.fixture
     def config(self):
-        return FleetConfig(
-            enabled=True,
-            schedule_interval_minutes=60,
+        return SolverConfig(
             optimization={
                 'time_resolution_minutes': 30,
                 'max_solve_time_seconds': 10,
@@ -316,18 +305,19 @@ class TestSolverPerformance:
                     'peak': 1.2, 'flat': 0.8, 'valley': 0.4,
                     'peak_hours': list(range(8, 22)),
                     'flat_hours': [6, 7, 22, 23],
+                    'valley_hours': [0, 1, 2, 3, 4, 5],
                 }
             },
             constraints={
                 'max_concurrent_devices': 10,
             },
+            freeze_profiles=[
+                {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 100, 'priority': 1},
+            ],
         )
 
     @pytest.fixture
     def solver(self, config):
-        config.__dict__['freeze_profiles'] = [
-            {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 100, 'priority': 1},
-        ]
         return IntegerProgrammingSolver(config)
 
     @pytest.fixture
@@ -389,9 +379,7 @@ class TestScheduleValidation:
 
     @pytest.fixture
     def config(self):
-        return FleetConfig(
-            enabled=True,
-            schedule_interval_minutes=60,
+        return SolverConfig(
             optimization={
                 'time_resolution_minutes': 30,
             },
@@ -405,13 +393,13 @@ class TestScheduleValidation:
             constraints={
                 'max_concurrent_devices': 10,
             },
+            freeze_profiles=[
+                {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 100, 'priority': 1},
+            ],
         )
 
     @pytest.fixture
     def solver(self, config):
-        config.__dict__['freeze_profiles'] = [
-            {'formula_id': 'FORMULA-001', 'primary_drying_hours': 8, 'secondary_drying_hours': 4, 'energy_kwh': 100, 'priority': 1},
-        ]
         return IntegerProgrammingSolver(config)
 
     def test_schedule_batch_consistency(self, solver):

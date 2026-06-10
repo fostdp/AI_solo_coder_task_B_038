@@ -13,6 +13,7 @@ import numpy as np
 import time
 from datetime import datetime, timezone, timedelta
 from collections import deque
+from dataclasses import asdict
 
 from defrost_optimizer.main import (
     FrostThicknessEstimator,
@@ -182,12 +183,13 @@ class TestDefrostOptimizer:
 
     @pytest.fixture
     def optimizer(self, config):
-        config.__dict__['energy_model'] = {
+        config_dict = asdict(config)
+        config_dict['energy_model'] = {
             'specific_energy_kwh_per_mm_frost': 0.5,
             'standby_power_kw': 2.0,
             'efficiency_coefficient': 0.85,
         }
-        return DefrostOptimizer(config)
+        return DefrostOptimizer(config_dict)
 
     @pytest.fixture
     def state(self):
@@ -386,12 +388,13 @@ class TestDefrostCycleRationality:
 
     @pytest.fixture
     def optimizer(self, config):
-        config.__dict__['energy_model'] = {
+        config_dict = asdict(config)
+        config_dict['energy_model'] = {
             'specific_energy_kwh_per_mm_frost': 0.5,
             'standby_power_kw': 2.0,
             'efficiency_coefficient': 0.85,
         }
-        return DefrostOptimizer(config)
+        return DefrostOptimizer(config_dict)
 
     def test_cycle_optimization_over_time(self, optimizer):
         """集成测试：模拟24小时的除霜周期优化"""

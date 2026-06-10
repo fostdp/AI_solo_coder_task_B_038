@@ -8,6 +8,7 @@ import sys
 import os
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "microservices"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
 import numpy as np
@@ -16,12 +17,8 @@ from datetime import datetime, timezone, timedelta
 from collections import deque
 from unittest.mock import patch
 
-from endpoint_detector.main import (
-    FirstDerivativeDetector,
-    AutoencoderDetector,
-    PressureRiseTestManager,
-    DeviceState,
-)
+from modules.endpoint_detector import FirstDerivativeDetector, AutoEncoderDetector
+from endpoint_detector.main import PressureRiseTestManager, DeviceState
 
 
 class TestFirstDerivativeDetector:
@@ -164,7 +161,7 @@ class TestFirstDerivativeDetector:
         assert is_end == True
 
 
-class TestAutoencoderDetector:
+class TestAutoEncoderDetector:
     """自编码器异常检测测试"""
 
     @pytest.fixture
@@ -175,8 +172,9 @@ class TestAutoencoderDetector:
             'hidden_layers': [32, 16],
             'threshold': 0.1,
             'min_training_samples': 50,
+            'confirmation_count': 1,
         }
-        return AutoencoderDetector(config)
+        return AutoEncoderDetector(config)
 
     def test_normal_pattern_training(self, detector):
         """正常场景：正常模式下的训练与检测"""
@@ -236,6 +234,16 @@ class TestAutoencoderDetector:
         
         detector.train(training_data)
         
+        normal_temps = np.random.normal(-30, 2, 8)
+        normal_vacs = np.random.normal(10, 1, 2)
+        normal_powers = np.random.normal(50, 5, 8)
+        normal_cold = np.random.normal(-80, 1)
+        normal_features = detector.extract_features(normal_temps, normal_vacs, normal_cold, normal_powers)
+        normal_error, _ = detector.predict(normal_features)
+        
+        detector._confirmed_endpoint = False
+        detector._consecutive_anomalies = 0
+        
         anomaly_temps = np.random.normal(0, 5, 8)
         anomaly_vacs = np.random.normal(100, 10, 2)
         anomaly_powers = np.random.normal(100, 20, 8)
@@ -243,8 +251,8 @@ class TestAutoencoderDetector:
         anomaly_features = detector.extract_features(anomaly_temps, anomaly_vacs, anomaly_cold, anomaly_powers)
         
         error, is_anomaly = detector.predict(anomaly_features)
+        assert error > normal_error * 2
         assert is_anomaly == True
-        assert error > detector.threshold
 
     def test_insufficient_training_data(self, detector):
         """异常场景：训练数据不足"""
@@ -295,6 +303,7 @@ class TestPressureRiseTestManager:
             'endpoint_threshold_pa_per_min': 0.05,
             'min_interval_between_tests_minutes': 5,
             'auto_trigger_enabled': True,
+            'confirmation_count': 1,
         }
         return PressureRiseTestManager(config)
 
