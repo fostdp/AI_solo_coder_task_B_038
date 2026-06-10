@@ -242,6 +242,109 @@ services:
     volumes:
       - ./microservices:/app/microservices:ro
 
+  endpoint-detector:
+    <<: *common-config
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        SERVICE_NAME: endpoint_detector
+    container_name: freeze-dryer-endpoint-detector
+    depends_on:
+      redis:
+        condition: service_healthy
+      timescale-db:
+        condition: service_healthy
+      profinet-driver:
+        condition: service_started
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescale-db:5432/${POSTGRES_DB:-freeze_dryer}
+      - CONFIG_PATH=/app/config
+      - DETECTION_INTERVAL=${DETECTION_INTERVAL:-60}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./microservices:/app/microservices:ro
+      - ./config:/app/config:ro
+
+  defrost-optimizer:
+    <<: *common-config
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        SERVICE_NAME: defrost_optimizer
+    container_name: freeze-dryer-defrost-optimizer
+    depends_on:
+      redis:
+        condition: service_healthy
+      timescale-db:
+        condition: service_healthy
+      profinet-driver:
+        condition: service_started
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescale-db:5432/${POSTGRES_DB:-freeze_dryer}
+      - CONFIG_PATH=/app/config
+      - DEFROST_CHECK_INTERVAL=${DEFROST_CHECK_INTERVAL:-300}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./microservices:/app/microservices:ro
+      - ./config:/app/config:ro
+
+  fleet-controller:
+    <<: *common-config
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        SERVICE_NAME: fleet_controller
+    container_name: freeze-dryer-fleet-controller
+    depends_on:
+      redis:
+        condition: service_healthy
+      timescale-db:
+        condition: service_healthy
+      endpoint-detector:
+        condition: service_started
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescale-db:5432/${POSTGRES_DB:-freeze_dryer}
+      - CONFIG_PATH=/app/config
+      - FLEET_SCHEDULE_INTERVAL=${FLEET_SCHEDULE_INTERVAL:-60}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./microservices:/app/microservices:ro
+      - ./config:/app/config:ro
+
+  defect-detector:
+    <<: *common-config
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        SERVICE_NAME: defect_detector
+    container_name: freeze-dryer-defect-detector
+    depends_on:
+      redis:
+        condition: service_healthy
+      timescale-db:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescale-db:5432/${POSTGRES_DB:-freeze_dryer}
+      - CONFIG_PATH=/app/config
+      - DEFECT_BATCH_SIZE=${DEFECT_BATCH_SIZE:-32}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./microservices:/app/microservices:ro
+      - ./config:/app/config:ro
+      - defect-images:/app/data/defect_images
+
   api-gateway:
     <<: *common-config
     build:
@@ -320,6 +423,8 @@ volumes:
     name: freeze-dryer-mqtt-log
   frontend-dist:
     name: freeze-dryer-frontend-dist
+  defect-images:
+    name: freeze-dryer-defect-images
 
 networks:
   freeze-dryer-net:

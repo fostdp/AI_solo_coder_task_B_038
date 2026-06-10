@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import text
 from app.core.config import settings
 from app.core.database import engine, AsyncSessionLocal
-from app.api import devices, data, control, prediction, alarm
+from app.api import devices, data, control, prediction, alarm, endpoint, defrost, fleet, defect
 from app.services.alarm import AlarmEvent
 from app.api.alarm import alarm_detector, mqtt_service, process_new_alarms
 
@@ -52,6 +52,10 @@ app.include_router(data.router)
 app.include_router(control.router)
 app.include_router(prediction.router)
 app.include_router(alarm.router)
+app.include_router(fleet.router)
+app.include_router(endpoint.router)
+app.include_router(defrost.router)
+app.include_router(defect.router)
 
 
 async def background_control_loop():

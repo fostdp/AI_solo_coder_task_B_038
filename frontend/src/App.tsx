@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Activity, ThermometerSun, Settings, Bell, RefreshCw } from 'lucide-react';
+import { Activity, ThermometerSun, Settings, Bell, RefreshCw, Target, Snowflake, Server, AlertTriangle } from 'lucide-react';
 import Heatmap from './components/Heatmap';
 import VacuumChart from './components/VacuumChart';
 import DeviceOverview from './components/DeviceOverview';
 import ControlPanel from './components/ControlPanel';
 import AlarmPanel from './components/AlarmPanel';
 import QualityPrediction from './components/QualityPrediction';
+import EndpointDashboard from './components/EndpointDashboard';
+import DefrostStatus from './components/DefrostStatus';
+import FleetControl from './components/FleetControl';
+import DefectDetection from './components/DefectDetection';
 import { useAppStore } from './store';
 import { deviceApi, dataApi, alarmApi } from './services/api';
 import type { RealtimeData, VacuumDataPoint, AlarmData } from './types';
@@ -28,7 +32,7 @@ function App() {
 
   const [selectedShelf, setSelectedShelf] = useState<number>(1);
   const [vacuumHistory, setVacuumHistory] = useState<VacuumDataPoint[]>([]);
-  const [activeTab, setActiveTab] = useState<'heatmap' | 'control' | 'prediction'>('heatmap');
+  const [activeTab, setActiveTab] = useState<'heatmap' | 'control' | 'prediction' | 'endpoint' | 'defrost' | 'fleet' | 'defect'>('heatmap');
   const [alarmHistory, setAlarmHistory] = useState<AlarmData[]>([]);
 
   const currentRealtimeData = realtimeData[selectedDevice] || [];
@@ -186,11 +190,15 @@ function App() {
             </div>
 
             <div className="bg-slate-900/50 rounded-xl border border-slate-700 overflow-hidden">
-              <div className="flex border-b border-slate-700">
+              <div className="flex border-b border-slate-700 flex-wrap">
                 {([
                   { id: 'heatmap', label: '温度热力图', icon: ThermometerSun },
                   { id: 'control', label: '功率控制', icon: Settings },
                   { id: 'prediction', label: '质量预测', icon: Activity },
+                  { id: 'endpoint', label: '终点判定', icon: Target },
+                  { id: 'defrost', label: '除霜优化', icon: Snowflake },
+                  { id: 'fleet', label: '群控调度', icon: Server },
+                  { id: 'defect', label: '缺陷检测', icon: AlertTriangle },
                 ] as const).map((tab) => (
                   <button
                     key={tab.id}
@@ -252,6 +260,22 @@ function App() {
                     deviceId={selectedDevice}
                     onPredict={handleQualityPredict}
                   />
+                )}
+
+                {activeTab === 'endpoint' && (
+                  <EndpointDashboard deviceId={selectedDevice} />
+                )}
+
+                {activeTab === 'defrost' && (
+                  <DefrostStatus deviceId={selectedDevice} />
+                )}
+
+                {activeTab === 'fleet' && (
+                  <FleetControl />
+                )}
+
+                {activeTab === 'defect' && (
+                  <DefectDetection deviceId={selectedDevice} />
                 )}
               </div>
             </div>

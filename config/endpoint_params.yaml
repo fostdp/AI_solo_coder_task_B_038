@@ -1,0 +1,49 @@
+# 冻干终点判定配置
+enabled: true
+detection_interval_seconds: 60
+
+# 一阶导数法配置
+first_derivative:
+  window_size: 10          # 滑动窗口大小（数据点数）
+  poly_order: 2            # Savitzky-Golay拟合多项式阶数
+  primary_drying_threshold: 0.05   # 一次干燥终点阈值（℃/min）
+  secondary_drying_threshold: 0.02  # 二次干燥终点阈值（℃/min）
+  consecutive_points: 5    # 连续满足条件的点数
+  min_phase_duration_hours: 2.0   # 最短阶段持续时间
+
+# 自编码器配置
+autoencoder:
+  input_dim: 11            # 输入特征维度
+  latent_dim: 4            # 潜层维度
+  hidden_layers: [32, 16]  # 隐藏层结构
+  threshold: 0.1           # 重构误差阈值
+  update_interval_batches: 5  # 模型更新间隔（批次）
+  min_training_samples: 100   # 最少训练样本数
+
+# 压力升测试配置
+pressure_rise_test:
+  enabled: true
+  test_duration_seconds: 120   # 测试持续时间
+  measurement_interval_seconds: 5  # 测量间隔
+  endpoint_threshold_pa_per_min: 0.05  # 终点判定阈值
+  min_interval_between_tests_minutes: 30  # 测试最小间隔
+  auto_trigger_enabled: true    # 自动触发测试
+
+# 组合决策配置
+combined_decision:
+  method: "weighted_voting"    # 决策方法: weighted_voting, majority, any
+  weights:
+    first_derivative: 0.4
+    autoencoder: 0.3
+    pressure_rise_test: 0.3
+  min_confidence: 0.7       # 最低置信度
+  require_manual_confirmation: false  # 是否需要人工确认
+
+# 阶段阈值配置
+phase_thresholds:
+  primary_drying_temp_min: -50.0
+  primary_drying_temp_max: -10.0
+  secondary_drying_temp_min: -10.0
+  secondary_drying_temp_max: 30.0
+  pressure_primary_max: 0.5
+  pressure_secondary_max: 0.1

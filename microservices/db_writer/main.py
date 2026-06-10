@@ -28,6 +28,10 @@ from shared import (
     MicroserviceBase, RedisConfig,
     CHANNELS, SERVICE_IDS,
     TelemetryData, ControlCommand, PredictionResult, AlarmEvent,
+    EndpointDetection, PressureRiseTest,
+    DefrostOptimization, DefrostCommand, DefrostStatus,
+    FleetSchedule, FleetCommand, FleetStatus,
+    DefectDetection, ImageUpload, BatchRecord,
     validate_message, extract_payload
 )
 
@@ -38,6 +42,17 @@ class DataType(str, Enum):
     CONTROL = "control"
     PREDICTION = "prediction"
     ALARM = "alarm"
+    ENDPOINT = "endpoint"
+    PRESSURE_RISE_TEST = "pressure_rise_test"
+    DEFROST_OPTIMIZATION = "defrost_optimization"
+    DEFROST_COMMAND = "defrost_command"
+    DEFROST_STATUS = "defrost_status"
+    FLEET_SCHEDULE = "fleet_schedule"
+    FLEET_COMMAND = "fleet_command"
+    FLEET_STATUS = "fleet_status"
+    DEFECT_DETECTION = "defect_detection"
+    IMAGE_UPLOAD = "image_upload"
+    BATCH_RECORD = "batch_record"
 
 
 @dataclass
@@ -164,6 +179,17 @@ class DBWriterService(MicroserviceBase):
         await self.subscribe(CHANNELS['CONTROL_COMMAND'], self._handle_control)
         await self.subscribe(CHANNELS['PREDICTION_RESULT'], self._handle_prediction)
         await self.subscribe(CHANNELS['ALARM_EVENT'], self._handle_alarm)
+        await self.subscribe(CHANNELS['ENDPOINT_DETECTION'], self._handle_endpoint)
+        await self.subscribe(CHANNELS['PRESSURE_RISE_TEST'], self._handle_pressure_rise_test)
+        await self.subscribe(CHANNELS['DEFROST_OPTIMIZATION'], self._handle_defrost_optimization)
+        await self.subscribe(CHANNELS['DEFROST_COMMAND'], self._handle_defrost_command)
+        await self.subscribe(CHANNELS['DEFROST_STATUS'], self._handle_defrost_status)
+        await self.subscribe(CHANNELS['FLEET_SCHEDULE'], self._handle_fleet_schedule)
+        await self.subscribe(CHANNELS['FLEET_COMMAND'], self._handle_fleet_command)
+        await self.subscribe(CHANNELS['FLEET_STATUS'], self._handle_fleet_status)
+        await self.subscribe(CHANNELS['DEFECT_DETECTION'], self._handle_defect_detection)
+        await self.subscribe(CHANNELS['IMAGE_UPLOAD'], self._handle_image_upload)
+        await self.subscribe(CHANNELS['BATCH_RECORD'], self._handle_batch_record)
 
     async def _on_start(self) -> None:
         """服务启动时执行"""
@@ -255,6 +281,182 @@ class DBWriterService(MicroserviceBase):
 
         await self._enqueue_item(item)
 
+    async def _handle_endpoint(self, message: Dict) -> None:
+        """处理干燥终点判定"""
+        if not validate_message(message, 'endpoint'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.ENDPOINT,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_pressure_rise_test(self, message: Dict) -> None:
+        """处理压力升测试"""
+        if not validate_message(message, 'pressure_rise_test'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.PRESSURE_RISE_TEST,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_defrost_optimization(self, message: Dict) -> None:
+        """处理除霜优化"""
+        if not validate_message(message, 'defrost_optimization'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.DEFROST_OPTIMIZATION,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_defrost_command(self, message: Dict) -> None:
+        """处理除霜命令"""
+        if not validate_message(message, 'defrost_command'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.DEFROST_COMMAND,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_defrost_status(self, message: Dict) -> None:
+        """处理除霜状态"""
+        if not validate_message(message, 'defrost_status'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.DEFROST_STATUS,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_fleet_schedule(self, message: Dict) -> None:
+        """处理群控调度计划"""
+        if not validate_message(message, 'fleet_schedule'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.FLEET_SCHEDULE,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_fleet_command(self, message: Dict) -> None:
+        """处理群控命令"""
+        if not validate_message(message, 'fleet_command'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.FLEET_COMMAND,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_fleet_status(self, message: Dict) -> None:
+        """处理群控状态"""
+        if not validate_message(message, 'fleet_status'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.FLEET_STATUS,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_defect_detection(self, message: Dict) -> None:
+        """处理缺陷检测结果"""
+        if not validate_message(message, 'defect_detection'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.DEFECT_DETECTION,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_image_upload(self, message: Dict) -> None:
+        """处理图像上传"""
+        if not validate_message(message, 'image_upload'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.IMAGE_UPLOAD,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
+    async def _handle_batch_record(self, message: Dict) -> None:
+        """处理批次记录"""
+        if not validate_message(message, 'batch_record'):
+            return
+
+        payload = extract_payload(message)
+        self._increment_metric("messages_received")
+
+        item = WriteItem(
+            data_type=DataType.BATCH_RECORD,
+            data=payload,
+            received_at=asyncio.get_event_loop().time()
+        )
+
+        await self._enqueue_item(item)
+
     async def _enqueue_item(self, item: WriteItem) -> None:
         """将数据项加入队列"""
         try:
@@ -324,6 +526,17 @@ class DBWriterService(MicroserviceBase):
                 control_data: List[Tuple] = []
                 prediction_data: List[Tuple] = []
                 alarm_data: List[Tuple] = []
+                endpoint_data: List[Tuple] = []
+                prt_data: List[Tuple] = []
+                defrost_opt_data: List[Tuple] = []
+                defrost_cmd_data: List[Tuple] = []
+                defrost_status_data: List[Tuple] = []
+                fleet_schedule_data: List[Tuple] = []
+                fleet_cmd_data: List[Tuple] = []
+                fleet_status_data: List[Tuple] = []
+                defect_data: List[Tuple] = []
+                image_upload_data: List[Tuple] = []
+                batch_record_data: List[Tuple] = []
 
                 for item in batch:
                     try:
@@ -335,6 +548,28 @@ class DBWriterService(MicroserviceBase):
                             prediction_data.append(self._prepare_prediction(item.data))
                         elif item.data_type == DataType.ALARM:
                             alarm_data.append(self._prepare_alarm(item.data))
+                        elif item.data_type == DataType.ENDPOINT:
+                            endpoint_data.append(self._prepare_endpoint(item.data))
+                        elif item.data_type == DataType.PRESSURE_RISE_TEST:
+                            prt_data.append(self._prepare_pressure_rise_test(item.data))
+                        elif item.data_type == DataType.DEFROST_OPTIMIZATION:
+                            defrost_opt_data.append(self._prepare_defrost_optimization(item.data))
+                        elif item.data_type == DataType.DEFROST_COMMAND:
+                            defrost_cmd_data.append(self._prepare_defrost_command(item.data))
+                        elif item.data_type == DataType.DEFROST_STATUS:
+                            defrost_status_data.append(self._prepare_defrost_status(item.data))
+                        elif item.data_type == DataType.FLEET_SCHEDULE:
+                            fleet_schedule_data.append(self._prepare_fleet_schedule(item.data))
+                        elif item.data_type == DataType.FLEET_COMMAND:
+                            fleet_cmd_data.append(self._prepare_fleet_command(item.data))
+                        elif item.data_type == DataType.FLEET_STATUS:
+                            fleet_status_data.append(self._prepare_fleet_status(item.data))
+                        elif item.data_type == DataType.DEFECT_DETECTION:
+                            defect_data.append(self._prepare_defect_detection(item.data))
+                        elif item.data_type == DataType.IMAGE_UPLOAD:
+                            image_upload_data.append(self._prepare_image_upload(item.data))
+                        elif item.data_type == DataType.BATCH_RECORD:
+                            batch_record_data.append(self._prepare_batch_record(item.data))
                     except Exception as e:
                         print(f"[{self.service_id}] 数据准备失败: {e}")
                         self._increment_metric("errors")
@@ -347,10 +582,36 @@ class DBWriterService(MicroserviceBase):
                     await self._insert_prediction(session, prediction_data)
                 if alarm_data:
                     await self._insert_alarm(session, alarm_data)
+                if endpoint_data:
+                    await self._insert_endpoint(session, endpoint_data)
+                if prt_data:
+                    await self._insert_pressure_rise_test(session, prt_data)
+                if defrost_opt_data:
+                    await self._insert_defrost_optimization(session, defrost_opt_data)
+                if defrost_cmd_data:
+                    await self._insert_defrost_command(session, defrost_cmd_data)
+                if defrost_status_data:
+                    await self._insert_defrost_status(session, defrost_status_data)
+                if fleet_schedule_data:
+                    await self._insert_fleet_schedule(session, fleet_schedule_data)
+                if fleet_cmd_data:
+                    await self._insert_fleet_command(session, fleet_cmd_data)
+                if fleet_status_data:
+                    await self._insert_fleet_status(session, fleet_status_data)
+                if defect_data:
+                    await self._insert_defect_detection(session, defect_data)
+                if image_upload_data:
+                    await self._insert_image_upload(session, image_upload_data)
+                if batch_record_data:
+                    await self._insert_batch_record(session, batch_record_data)
 
                 await session.commit()
 
-            written_count = len(telemetry_data) + len(control_data) + len(prediction_data) + len(alarm_data)
+            written_count = (len(telemetry_data) + len(control_data) + len(prediction_data) + 
+                           len(alarm_data) + len(endpoint_data) + len(prt_data) +
+                           len(defrost_opt_data) + len(defrost_cmd_data) + len(defrost_status_data) +
+                           len(fleet_schedule_data) + len(fleet_cmd_data) + len(fleet_status_data) +
+                           len(defect_data) + len(image_upload_data) + len(batch_record_data))
             self._metrics["total_written"] += written_count
             print(f"[{self.service_id}] 批量写入完成: {len(batch)}条")
             return True
@@ -445,6 +706,173 @@ class DBWriterService(MicroserviceBase):
             data.get('acknowledged', False),
             data.get('acknowledged_by'),
             data.get('acknowledged_at'),
+        )
+
+    def _prepare_endpoint(self, data: Dict) -> Tuple:
+        """准备干燥终点判定数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id', ''),
+            data.get('cycle_phase', ''),
+            data.get('detection_method', ''),
+            data.get('endpoint_timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('detection_confidence', 0.0),
+            data.get('pressure_rise_delta'),
+            data.get('temp_inflection_point'),
+            data.get('temp_first_derivative'),
+            data.get('autoencoder_recon_error'),
+            data.get('cycle_duration_hours'),
+            data.get('estimated_energy_saving'),
+        )
+
+    def _prepare_pressure_rise_test(self, data: Dict) -> Tuple:
+        """准备压力升测试数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id'),
+            data.get('test_start_time', datetime.now(timezone.utc).isoformat()),
+            data.get('test_end_time'),
+            data.get('initial_pressure_pa', 0.0),
+            data.get('final_pressure_pa', 0.0),
+            data.get('pressure_rise_pa_per_min', 0.0),
+            data.get('test_duration_seconds', 0),
+            data.get('is_endpoint_detected', False),
+            data.get('detection_confidence'),
+            data.get('test_status', 'completed'),
+        )
+
+    def _prepare_defrost_optimization(self, data: Dict) -> Tuple:
+        """准备除霜优化数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id'),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('estimated_frost_thickness_mm', 0.0),
+            data.get('cold_trap_temp_avg', 0.0),
+            data.get('cold_trap_temp_trend', 0.0),
+            data.get('recommended_defrost_interval_hours', 0.0),
+            data.get('recommended_heating_power_pct', 0.0),
+            data.get('estimated_energy_saving'),
+            data.get('defrost_status', 'pending'),
+        )
+
+    def _prepare_defrost_command(self, data: Dict) -> Tuple:
+        """准备除霜命令数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('command', ''),
+            data.get('heating_power_pct', 0.0),
+            data.get('max_duration_minutes'),
+            data.get('batch_id'),
+        )
+
+    def _prepare_defrost_status(self, data: Dict) -> Tuple:
+        """准备除霜状态数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('status', ''),
+            data.get('progress_pct'),
+            data.get('current_temp'),
+            data.get('target_temp'),
+            data.get('energy_consumed_kwh'),
+            data.get('batch_id'),
+        )
+
+    def _prepare_fleet_schedule(self, data: Dict) -> Tuple:
+        """准备群控调度计划数据"""
+        details = data.get('details', [])
+        details_json = json.dumps(details, ensure_ascii=False) if details else None
+        return (
+            data.get('schedule_id', str(uuid4())),
+            data.get('schedule_date', datetime.now(timezone.utc).strftime('%Y-%m-%d')),
+            data.get('total_required_batches', 0),
+            data.get('estimated_energy_cost', 0.0),
+            data.get('optimized_energy_saving', 0.0),
+            data.get('solver_status', ''),
+            details_json,
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+        )
+
+    def _prepare_fleet_command(self, data: Dict) -> Tuple:
+        """准备群控命令数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('command', ''),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('batch_id'),
+            data.get('formula_id'),
+            data.get('freeze_profile_id'),
+            data.get('priority', 0),
+        )
+
+    def _prepare_fleet_status(self, data: Dict) -> Tuple:
+        """准备群控状态数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('batch_id'),
+            data.get('batch_status', ''),
+            data.get('current_phase'),
+            data.get('phase_progress_pct'),
+            data.get('estimated_completion_time'),
+            data.get('current_power_kw'),
+        )
+
+    def _prepare_defect_detection(self, data: Dict) -> Tuple:
+        """准备缺陷检测数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id', ''),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('image_path', ''),
+            data.get('image_hash', ''),
+            data.get('defect_type', ''),
+            data.get('defect_severity', ''),
+            data.get('confidence', 0.0),
+            data.get('bbox_x'),
+            data.get('bbox_y'),
+            data.get('bbox_width'),
+            data.get('bbox_height'),
+            data.get('shelf_id'),
+            data.get('vial_position'),
+            data.get('is_manual_reviewed', False),
+        )
+
+    def _prepare_image_upload(self, data: Dict) -> Tuple:
+        """准备图像上传数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id', ''),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('image_path', ''),
+            data.get('image_hash', ''),
+            data.get('shelf_id'),
+            data.get('vial_position'),
+            data.get('file_size_bytes'),
+            data.get('content_type'),
+        )
+
+    def _prepare_batch_record(self, data: Dict) -> Tuple:
+        """准备批次记录数据"""
+        return (
+            data.get('device_id', 0),
+            data.get('batch_id', ''),
+            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
+            data.get('update_type', ''),
+            data.get('freeze_profile_id'),
+            data.get('formula_id'),
+            data.get('start_time'),
+            data.get('end_time'),
+            data.get('primary_drying_endpoint'),
+            data.get('secondary_drying_endpoint'),
+            data.get('avg_moisture_content'),
+            data.get('avg_reconstitution_time'),
+            data.get('defect_rate'),
+            data.get('quality_score'),
+            data.get('batch_status'),
+            data.get('notes'),
         )
 
     async def _insert_telemetry(self, session: AsyncSession, data: List[Tuple]) -> None:
@@ -594,6 +1022,379 @@ class DBWriterService(MicroserviceBase):
                 'acknowledged': row[7],
                 'acknowledged_by': row[8],
                 'acknowledged_at': row[9],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_endpoint(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入干燥终点判定"""
+        stmt = text("""
+            INSERT INTO drying_endpoints (
+                device_id, batch_id, cycle_phase, detection_method,
+                endpoint_timestamp, detection_confidence, pressure_rise_delta,
+                temp_inflection_point, temp_first_derivative, autoencoder_recon_error,
+                cycle_duration_hours, estimated_energy_saving
+            ) VALUES (
+                :device_id, :batch_id, :cycle_phase, :detection_method,
+                :endpoint_timestamp, :detection_confidence, :pressure_rise_delta,
+                :temp_inflection_point, :temp_first_derivative, :autoencoder_recon_error,
+                :cycle_duration_hours, :estimated_energy_saving
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'cycle_phase': row[2],
+                'detection_method': row[3],
+                'endpoint_timestamp': row[4],
+                'detection_confidence': row[5],
+                'pressure_rise_delta': row[6],
+                'temp_inflection_point': row[7],
+                'temp_first_derivative': row[8],
+                'autoencoder_recon_error': row[9],
+                'cycle_duration_hours': row[10],
+                'estimated_energy_saving': row[11],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_pressure_rise_test(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入压力升测试"""
+        stmt = text("""
+            INSERT INTO pressure_rise_tests (
+                device_id, batch_id, test_start_time, test_end_time,
+                initial_pressure_pa, final_pressure_pa, pressure_rise_pa_per_min,
+                test_duration_seconds, is_endpoint_detected, detection_confidence,
+                test_status
+            ) VALUES (
+                :device_id, :batch_id, :test_start_time, :test_end_time,
+                :initial_pressure_pa, :final_pressure_pa, :pressure_rise_pa_per_min,
+                :test_duration_seconds, :is_endpoint_detected, :detection_confidence,
+                :test_status
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'test_start_time': row[2],
+                'test_end_time': row[3],
+                'initial_pressure_pa': row[4],
+                'final_pressure_pa': row[5],
+                'pressure_rise_pa_per_min': row[6],
+                'test_duration_seconds': row[7],
+                'is_endpoint_detected': row[8],
+                'detection_confidence': row[9],
+                'test_status': row[10],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_defrost_optimization(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入除霜优化"""
+        stmt = text("""
+            INSERT INTO defrost_optimizations (
+                device_id, batch_id, timestamp, estimated_frost_thickness_mm,
+                cold_trap_temp_avg, cold_trap_temp_trend, recommended_defrost_interval_hours,
+                recommended_heating_power_pct, estimated_energy_saving, defrost_status
+            ) VALUES (
+                :device_id, :batch_id, :timestamp, :estimated_frost_thickness_mm,
+                :cold_trap_temp_avg, :cold_trap_temp_trend, :recommended_defrost_interval_hours,
+                :recommended_heating_power_pct, :estimated_energy_saving, :defrost_status
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'timestamp': row[2],
+                'estimated_frost_thickness_mm': row[3],
+                'cold_trap_temp_avg': row[4],
+                'cold_trap_temp_trend': row[5],
+                'recommended_defrost_interval_hours': row[6],
+                'recommended_heating_power_pct': row[7],
+                'estimated_energy_saving': row[8],
+                'defrost_status': row[9],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_defrost_command(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入除霜命令"""
+        stmt = text("""
+            INSERT INTO defrost_commands (
+                device_id, timestamp, command, heating_power_pct,
+                max_duration_minutes, batch_id
+            ) VALUES (
+                :device_id, :timestamp, :command, :heating_power_pct,
+                :max_duration_minutes, :batch_id
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'timestamp': row[1],
+                'command': row[2],
+                'heating_power_pct': row[3],
+                'max_duration_minutes': row[4],
+                'batch_id': row[5],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_defrost_status(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入除霜状态"""
+        stmt = text("""
+            INSERT INTO defrost_status (
+                device_id, timestamp, status, progress_pct,
+                current_temp, target_temp, energy_consumed_kwh, batch_id
+            ) VALUES (
+                :device_id, :timestamp, :status, :progress_pct,
+                :current_temp, :target_temp, :energy_consumed_kwh, :batch_id
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'timestamp': row[1],
+                'status': row[2],
+                'progress_pct': row[3],
+                'current_temp': row[4],
+                'target_temp': row[5],
+                'energy_consumed_kwh': row[6],
+                'batch_id': row[7],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_fleet_schedule(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入群控调度计划"""
+        stmt = text("""
+            INSERT INTO fleet_schedules (
+                schedule_id, schedule_date, total_required_batches,
+                estimated_energy_cost, optimized_energy_saving, solver_status,
+                details, timestamp
+            ) VALUES (
+                :schedule_id, :schedule_date, :total_required_batches,
+                :estimated_energy_cost, :optimized_energy_saving, :solver_status,
+                :details, :timestamp
+            )
+            ON CONFLICT (schedule_id) DO UPDATE SET
+                total_required_batches = EXCLUDED.total_required_batches,
+                estimated_energy_cost = EXCLUDED.estimated_energy_cost,
+                optimized_energy_saving = EXCLUDED.optimized_energy_saving,
+                solver_status = EXCLUDED.solver_status,
+                details = EXCLUDED.details
+        """)
+
+        params = [
+            {
+                'schedule_id': row[0],
+                'schedule_date': row[1],
+                'total_required_batches': row[2],
+                'estimated_energy_cost': row[3],
+                'optimized_energy_saving': row[4],
+                'solver_status': row[5],
+                'details': row[6],
+                'timestamp': row[7],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_fleet_command(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入群控命令"""
+        stmt = text("""
+            INSERT INTO fleet_commands (
+                device_id, command, timestamp, batch_id,
+                formula_id, freeze_profile_id, priority
+            ) VALUES (
+                :device_id, :command, :timestamp, :batch_id,
+                :formula_id, :freeze_profile_id, :priority
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'command': row[1],
+                'timestamp': row[2],
+                'batch_id': row[3],
+                'formula_id': row[4],
+                'freeze_profile_id': row[5],
+                'priority': row[6],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_fleet_status(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入群控状态"""
+        stmt = text("""
+            INSERT INTO fleet_status (
+                device_id, timestamp, batch_id, batch_status,
+                current_phase, phase_progress_pct, estimated_completion_time,
+                current_power_kw
+            ) VALUES (
+                :device_id, :timestamp, :batch_id, :batch_status,
+                :current_phase, :phase_progress_pct, :estimated_completion_time,
+                :current_power_kw
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'timestamp': row[1],
+                'batch_id': row[2],
+                'batch_status': row[3],
+                'current_phase': row[4],
+                'phase_progress_pct': row[5],
+                'estimated_completion_time': row[6],
+                'current_power_kw': row[7],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_defect_detection(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入缺陷检测"""
+        stmt = text("""
+            INSERT INTO product_defects (
+                device_id, batch_id, timestamp, image_path, image_hash,
+                defect_type, defect_severity, confidence,
+                bbox_x, bbox_y, bbox_width, bbox_height,
+                shelf_id, vial_position, is_manual_reviewed
+            ) VALUES (
+                :device_id, :batch_id, :timestamp, :image_path, :image_hash,
+                :defect_type, :defect_severity, :confidence,
+                :bbox_x, :bbox_y, :bbox_width, :bbox_height,
+                :shelf_id, :vial_position, :is_manual_reviewed
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'timestamp': row[2],
+                'image_path': row[3],
+                'image_hash': row[4],
+                'defect_type': row[5],
+                'defect_severity': row[6],
+                'confidence': row[7],
+                'bbox_x': row[8],
+                'bbox_y': row[9],
+                'bbox_width': row[10],
+                'bbox_height': row[11],
+                'shelf_id': row[12],
+                'vial_position': row[13],
+                'is_manual_reviewed': row[14],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_image_upload(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入图像上传"""
+        stmt = text("""
+            INSERT INTO image_uploads (
+                device_id, batch_id, timestamp, image_path, image_hash,
+                shelf_id, vial_position, file_size_bytes, content_type
+            ) VALUES (
+                :device_id, :batch_id, :timestamp, :image_path, :image_hash,
+                :shelf_id, :vial_position, :file_size_bytes, :content_type
+            )
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'timestamp': row[2],
+                'image_path': row[3],
+                'image_hash': row[4],
+                'shelf_id': row[5],
+                'vial_position': row[6],
+                'file_size_bytes': row[7],
+                'content_type': row[8],
+            }
+            for row in data
+        ]
+
+        await session.execute(stmt, params)
+
+    async def _insert_batch_record(self, session: AsyncSession, data: List[Tuple]) -> None:
+        """批量插入批次记录"""
+        stmt = text("""
+            INSERT INTO batch_records (
+                device_id, batch_id, timestamp, update_type,
+                freeze_profile_id, formula_id, start_time, end_time,
+                primary_drying_endpoint, secondary_drying_endpoint,
+                avg_moisture_content, avg_reconstitution_time,
+                defect_rate, quality_score, batch_status, notes
+            ) VALUES (
+                :device_id, :batch_id, :timestamp, :update_type,
+                :freeze_profile_id, :formula_id, :start_time, :end_time,
+                :primary_drying_endpoint, :secondary_drying_endpoint,
+                :avg_moisture_content, :avg_reconstitution_time,
+                :defect_rate, :quality_score, :batch_status, :notes
+            )
+            ON CONFLICT (device_id, batch_id, update_type) DO UPDATE SET
+                freeze_profile_id = COALESCE(EXCLUDED.freeze_profile_id, batch_records.freeze_profile_id),
+                formula_id = COALESCE(EXCLUDED.formula_id, batch_records.formula_id),
+                start_time = COALESCE(EXCLUDED.start_time, batch_records.start_time),
+                end_time = COALESCE(EXCLUDED.end_time, batch_records.end_time),
+                primary_drying_endpoint = COALESCE(EXCLUDED.primary_drying_endpoint, batch_records.primary_drying_endpoint),
+                secondary_drying_endpoint = COALESCE(EXCLUDED.secondary_drying_endpoint, batch_records.secondary_drying_endpoint),
+                avg_moisture_content = COALESCE(EXCLUDED.avg_moisture_content, batch_records.avg_moisture_content),
+                avg_reconstitution_time = COALESCE(EXCLUDED.avg_reconstitution_time, batch_records.avg_reconstitution_time),
+                defect_rate = COALESCE(EXCLUDED.defect_rate, batch_records.defect_rate),
+                quality_score = COALESCE(EXCLUDED.quality_score, batch_records.quality_score),
+                batch_status = COALESCE(EXCLUDED.batch_status, batch_records.batch_status),
+                notes = COALESCE(EXCLUDED.notes, batch_records.notes)
+        """)
+
+        params = [
+            {
+                'device_id': row[0],
+                'batch_id': row[1],
+                'timestamp': row[2],
+                'update_type': row[3],
+                'freeze_profile_id': row[4],
+                'formula_id': row[5],
+                'start_time': row[6],
+                'end_time': row[7],
+                'primary_drying_endpoint': row[8],
+                'secondary_drying_endpoint': row[9],
+                'avg_moisture_content': row[10],
+                'avg_reconstitution_time': row[11],
+                'defect_rate': row[12],
+                'quality_score': row[13],
+                'batch_status': row[14],
+                'notes': row[15],
             }
             for row in data
         ]

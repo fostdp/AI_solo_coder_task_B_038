@@ -43,6 +43,51 @@ class AlarmConfig:
     auto_suppression: Dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass
+class EndpointConfig:
+    """干燥终点判定配置"""
+    enabled: bool = True
+    detection_interval_seconds: int = 60
+    first_derivative: Dict[str, Any] = field(default_factory=dict)
+    autoencoder: Dict[str, Any] = field(default_factory=dict)
+    pressure_rise_test: Dict[str, Any] = field(default_factory=dict)
+    combined_decision: Dict[str, Any] = field(default_factory=dict)
+    phase_thresholds: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class DefrostConfig:
+    """冷阱除霜优化配置"""
+    enabled: bool = True
+    check_interval_seconds: int = 300
+    frost_thickness_estimation: Dict[str, Any] = field(default_factory=dict)
+    optimization: Dict[str, Any] = field(default_factory=dict)
+    thresholds: Dict[str, Any] = field(default_factory=dict)
+    power_profile: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class FleetConfig:
+    """群控调度配置"""
+    enabled: bool = True
+    schedule_interval_minutes: int = 60
+    optimization: Dict[str, Any] = field(default_factory=dict)
+    electricity_price: Dict[str, Any] = field(default_factory=dict)
+    device_priorities: Dict[str, Any] = field(default_factory=dict)
+    constraints: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class DefectConfig:
+    """缺陷检测配置"""
+    enabled: bool = True
+    cnn_model: Dict[str, Any] = field(default_factory=dict)
+    image_preprocessing: Dict[str, Any] = field(default_factory=dict)
+    defect_types: Dict[str, Any] = field(default_factory=dict)
+    confidence_threshold: float = 0.8
+    auto_review: bool = False
+
+
 class ConfigLoader:
     """配置加载器"""
 
@@ -51,6 +96,10 @@ class ConfigLoader:
         self._control_config: ControlConfig = None
         self._model_config: ModelConfig = None
         self._alarm_config: AlarmConfig = None
+        self._endpoint_config: EndpointConfig = None
+        self._defrost_config: DefrostConfig = None
+        self._fleet_config: FleetConfig = None
+        self._defect_config: DefectConfig = None
 
     def load_control_config(self) -> ControlConfig:
         """加载控制参数"""
@@ -100,12 +149,97 @@ class ConfigLoader:
             )
         return self._alarm_config
 
+    def load_endpoint_config(self) -> EndpointConfig:
+        """加载终点判定配置"""
+        if self._endpoint_config is None:
+            file_path = self.config_dir / "endpoint_params.yaml"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = yaml.safe_load(f)
+                self._endpoint_config = EndpointConfig(
+                    enabled=data.get('enabled', True),
+                    detection_interval_seconds=data.get('detection_interval_seconds', 60),
+                    first_derivative=data.get('first_derivative', {}),
+                    autoencoder=data.get('autoencoder', {}),
+                    pressure_rise_test=data.get('pressure_rise_test', {}),
+                    combined_decision=data.get('combined_decision', {}),
+                    phase_thresholds=data.get('phase_thresholds', {})
+                )
+            else:
+                self._endpoint_config = EndpointConfig()
+        return self._endpoint_config
+
+    def load_defrost_config(self) -> DefrostConfig:
+        """加载除霜优化配置"""
+        if self._defrost_config is None:
+            file_path = self.config_dir / "defrost_params.yaml"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = yaml.safe_load(f)
+                self._defrost_config = DefrostConfig(
+                    enabled=data.get('enabled', True),
+                    check_interval_seconds=data.get('check_interval_seconds', 300),
+                    frost_thickness_estimation=data.get('frost_thickness_estimation', {}),
+                    optimization=data.get('optimization', {}),
+                    thresholds=data.get('thresholds', {}),
+                    power_profile=data.get('power_profile', {})
+                )
+            else:
+                self._defrost_config = DefrostConfig()
+        return self._defrost_config
+
+    def load_fleet_config(self) -> FleetConfig:
+        """加载群控调度配置"""
+        if self._fleet_config is None:
+            file_path = self.config_dir / "fleet_params.yaml"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = yaml.safe_load(f)
+                self._fleet_config = FleetConfig(
+                    enabled=data.get('enabled', True),
+                    schedule_interval_minutes=data.get('schedule_interval_minutes', 60),
+                    optimization=data.get('optimization', {}),
+                    electricity_price=data.get('electricity_price', {}),
+                    device_priorities=data.get('device_priorities', {}),
+                    constraints=data.get('constraints', {})
+                )
+            else:
+                self._fleet_config = FleetConfig()
+        return self._fleet_config
+
+    def load_defect_config(self) -> DefectConfig:
+        """加载缺陷检测配置"""
+        if self._defect_config is None:
+            file_path = self.config_dir / "defect_params.yaml"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = yaml.safe_load(f)
+                self._defect_config = DefectConfig(
+                    enabled=data.get('enabled', True),
+                    cnn_model=data.get('cnn_model', {}),
+                    image_preprocessing=data.get('image_preprocessing', {}),
+                    defect_types=data.get('defect_types', {}),
+                    confidence_threshold=data.get('confidence_threshold', 0.8),
+                    auto_review=data.get('auto_review', False)
+                )
+            else:
+                self._defect_config = DefectConfig()
+        return self._defect_config
+
     def reload_all(self):
         """重新加载所有配置"""
         self._control_config = None
         self._model_config = None
         self._alarm_config = None
-        return self.load_control_config(), self.load_model_config(), self.load_alarm_config()
+        self._endpoint_config = None
+        self._defrost_config = None
+        self._fleet_config = None
+        self._defect_config = None
+        return (
+            self.load_control_config(), self.load_model_config(), self.load_alarm_config(),
+            self.load_endpoint_config(), self.load_defrost_config(),
+            self.load_fleet_config(), self.load_defect_config()
+        )
 
     def get(self, config_type: str, key_path: str, default: Any = None) -> Any:
         """获取配置值"""
@@ -118,6 +252,14 @@ class ConfigLoader:
             config = self.load_model_config()
         elif config_type == 'alarm':
             config = self.load_alarm_config()
+        elif config_type == 'endpoint':
+            config = self.load_endpoint_config()
+        elif config_type == 'defrost':
+            config = self.load_defrost_config()
+        elif config_type == 'fleet':
+            config = self.load_fleet_config()
+        elif config_type == 'defect':
+            config = self.load_defect_config()
         else:
             return default
 

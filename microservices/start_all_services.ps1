@@ -15,6 +15,10 @@ $services = @(
     @{ Name = "quality_predictor"; Port = "None"; Color = "Cyan" },
     @{ Name = "alarm_publisher"; Port = "None"; Color = "Red" },
     @{ Name = "db_writer"; Port = "None"; Color = "Magenta" },
+    @{ Name = "endpoint_detector"; Port = "None"; Color = "DarkCyan" },
+    @{ Name = "defrost_optimizer"; Port = "None"; Color = "DarkYellow" },
+    @{ Name = "fleet_controller"; Port = "None"; Color = "DarkMagenta" },
+    @{ Name = "defect_detector"; Port = "None"; Color = "DarkRed" },
     @{ Name = "api_gateway"; Port = "8000"; Color = "Blue" }
 )
 

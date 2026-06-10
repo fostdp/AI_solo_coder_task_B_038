@@ -1,0 +1,90 @@
+# 群控调度配置
+enabled: true
+schedule_interval_minutes: 60
+
+# 优化配置
+optimization:
+  solver: "pulp"                    # 求解器: pulp, scipy, custom
+  time_horizon_hours: 24            # 调度时间范围
+  time_resolution_minutes: 30       # 时间粒度
+  max_solve_time_seconds: 30        # 最大求解时间
+  mip_gap: 0.01                     # 整数规划间隙
+  
+  # 权重配置
+  weights:
+    energy_cost: 0.6
+    throughput: 0.3
+    wear_and_tear: 0.1
+  
+  # 目标配置
+  objectives:
+    minimize_energy_cost: true
+    maximize_throughput: true
+    balance_device_usage: true
+
+# 电价配置
+electricity_price:
+  source: "database"                # 来源: database, static, api
+  peak_price_multiplier: 1.0
+  valley_price_discount: 1.0
+  forecast_days: 3
+  
+  # 静态电价（当source为static时使用）
+  static_prices:
+    peak: 1.2        # 峰时电价（元/度）
+    flat: 0.8        # 平时电价
+    valley: 0.4      # 谷时电价
+    peak_hours: [7, 8, 9, 10, 18, 19, 20, 21, 22, 23]
+    flat_hours: [11, 12, 13, 14, 15, 16, 17]
+    valley_hours: [0, 1, 2, 3, 4, 5, 6]
+
+# 设备优先级配置
+device_priorities:
+  default: 1
+  # 可以为特定设备设置更高优先级
+  # 1: 2  # 设备1优先级为2
+  
+# 约束条件
+constraints:
+  max_concurrent_devices: 10        # 最大并发运行设备数
+  min_operating_hours_per_batch: 20.0  # 每批次最少运行时间
+  max_operating_hours_per_day: 22.0   # 每天最多运行时间
+  mandatory_maintenance_hours: 2.0    # 强制维护时间
+  allow_batch_splitting: false        # 是否允许拆分批次
+  
+  # 人员约束
+  min_operator_available_hours: [6, 22]  # 操作人员可用时间
+  
+  # 设备维护周期
+  maintenance_interval_batches: 50       # 每50批次维护一次
+  maintenance_duration_hours: 4.0
+
+# 冻干曲线库
+freeze_profiles:
+  - formula_id: "FORMULA-001"
+    name: "标准配方A"
+    primary_drying_hours: 24
+    secondary_drying_hours: 8
+    energy_kwh: 120
+    priority: 1
+    
+  - formula_id: "FORMULA-002"
+    name: "快速配方B"
+    primary_drying_hours: 18
+    secondary_drying_hours: 6
+    energy_kwh: 100
+    priority: 2
+    
+  - formula_id: "FORMULA-003"
+    name: "温和配方C"
+    primary_drying_hours: 30
+    secondary_drying_hours: 12
+    energy_kwh: 150
+    priority: 1
+    
+  - formula_id: "FORMULA-004"
+    name: "高真空配方D"
+    primary_drying_hours: 28
+    secondary_drying_hours: 10
+    energy_kwh: 140
+    priority: 1

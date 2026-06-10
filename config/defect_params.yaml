@@ -1,0 +1,107 @@
+# 制品缺陷检测配置
+enabled: true
+confidence_threshold: 0.8
+auto_review: false
+
+# CNN模型配置
+cnn_model:
+  architecture: "efficientnet_b0"  # 模型架构
+  input_size: [224, 224]            # 输入尺寸
+  num_classes: 4                    # 类别数
+  pretrained: true                  # 是否使用预训练权重
+  
+  # 模型结构参数
+  dropout_rate: 0.3
+  use_attention: true
+  attention_type: "se"              # SE注意力
+  
+  # 推理配置
+  inference_batch_size: 16
+  device: "cpu"                     # cpu, cuda
+  
+  # 类别权重（处理类别不平衡）
+  class_weights:
+    normal: 1.0
+    collapse: 2.0
+    atrophy: 1.5
+    cracking: 2.0
+
+# 图像预处理配置
+image_preprocessing:
+  resize: [224, 224]
+  normalization:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  augment: false                    # 推理时不做增强
+  
+  # 质量检查
+  quality_check:
+    enabled: true
+    min_resolution: [100, 100]
+    max_brightness: 250
+    min_brightness: 5
+    blurriness_threshold: 100
+
+# 缺陷类型配置
+defect_types:
+  normal:
+    label: "正常"
+    description: "制品外观正常，无明显缺陷"
+    severity: "none"
+    quality_impact: 0.0
+    
+  collapse:
+    label: "塌陷"
+    description: "制品表面塌陷，结构不完整"
+    severity: "high"
+    quality_impact: 0.8
+    reject_threshold: 0.05  # 超过5%则整批拒收
+    
+  atrophy:
+    label: "萎缩"
+    description: "制品体积明显缩小，密度异常"
+    severity: "medium"
+    quality_impact: 0.5
+    reject_threshold: 0.10  # 超过10%则整批拒收
+    
+  cracking:
+    label: "开裂"
+    description: "制品表面出现裂纹"
+    severity: "high"
+    quality_impact: 0.7
+    reject_threshold: 0.03  # 超过3%则整批拒收
+
+# 后处理配置
+post_processing:
+  # 边界框平滑
+  bbox_smoothing: true
+  smoothing_factor: 0.5
+  
+  # 非极大值抑制
+  nms_enabled: true
+  nms_iou_threshold: 0.5
+  
+  # 聚类检测（同一搁板多个相似缺陷）
+  clustering_enabled: true
+  clustering_distance: 50  # 像素距离
+
+# 批量处理
+batch_processing:
+  enabled: true
+  batch_size: 32
+  max_queue_size: 100
+  process_timeout_seconds: 60
+
+# 结果存储
+result_storage:
+  save_images: true
+  save_crops: true
+  image_quality: 90
+  storage_path: "/app/data/defect_images"
+
+# 人工审核
+manual_review:
+  auto_trigger: true
+  trigger_confidence_range: [0.7, 0.9]  # 置信度在此区间自动触发人工审核
+  trigger_defect_types: ["collapse", "cracking"]  # 这些类型总是触发
+  reviewers: ["operator", "qa"]

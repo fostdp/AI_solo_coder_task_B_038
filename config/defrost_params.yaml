@@ -1,0 +1,50 @@
+# 冷阱除霜优化配置
+enabled: true
+check_interval_seconds: 300
+
+# 结霜厚度估算配置
+frost_thickness_estimation:
+  method: "thermal_resistance"  # 估算方法: thermal_resistance, empirical
+  base_cold_trap_temp: -80.0    # 基准冷阱温度（无结霜）
+  max_frost_thickness_mm: 5.0   # 最大结霜厚度
+  calibration_factor: 1.2       # 校准系数
+  temp_window_minutes: 60       # 温度趋势分析窗口
+  min_running_hours_before_defrost: 8.0  # 最短运行时间
+
+# 除霜优化配置
+optimization:
+  objective: "energy_cost"      # 优化目标: energy_cost, throughput, balanced
+  scheduling_method: "predictive"  # 调度方法: predictive, threshold, adaptive
+  allow_defrost_during_batches: false  # 是否允许批次中除霜
+  prefer_valley_electricity: true     # 优先谷电时段
+  min_interval_between_defrosts_hours: 6.0
+
+# 阈值配置
+thresholds:
+  frost_thickness_trigger_mm: 3.0    # 触发除霜的结霜厚度
+  temp_trend_trigger: 0.5            # 温度趋势触发值（℃/hour）
+  vacuum_degradation_trigger: 0.1    # 真空度退化触发值（Pa）
+  min_defrost_interval_hours: 4.0
+  max_defrost_interval_hours: 24.0
+
+# 除霜功率曲线配置
+power_profile:
+  max_power_pct: 80.0          # 最大功率百分比
+  preheat_power_pct: 30.0      # 预热功率
+  main_heating_power_pct: 80.0 # 主加热功率
+  soak_power_pct: 50.0         # 保温功率
+  preheat_duration_minutes: 10 # 预热时长
+  main_duration_minutes: 30    # 主加热时长
+  soak_duration_minutes: 10    # 保温时长
+  cooldown_duration_minutes: 10 # 冷却时长
+  
+  # 自适应功率参数
+  adaptive_power_enabled: true
+  power_adjustment_factor: 0.1  # 功率调整系数
+  min_power_pct: 20.0
+  
+# 能耗模型
+energy_model:
+  specific_energy_kwh_per_mm_frost: 0.5  # 每毫米霜的能耗
+  standby_power_kw: 2.0                   # 待机功率
+  efficiency_coefficient: 0.85            # 效率系数

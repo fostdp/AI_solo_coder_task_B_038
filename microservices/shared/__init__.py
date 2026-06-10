@@ -10,11 +10,16 @@ from .message_protocol import (
     TelemetryData, ControlCommand, ControlStatus,
     PredictionResult, AlarmEvent, AlarmAck,
     ConfigUpdate, ServiceStatus,
+    EndpointDetection, PressureRiseTest,
+    DefrostOptimization, DefrostCommand, DefrostStatus,
+    FleetSchedule, FleetCommand, FleetStatus,
+    DefectDetection, ImageUpload, BatchRecord,
     serialize_message, deserialize_message,
     validate_message, extract_payload
 )
 from .config_loader import (
     ConfigLoader, ControlConfig, ModelConfig, AlarmConfig,
+    EndpointConfig, DefrostConfig, FleetConfig, DefectConfig,
     config_loader
 )
 
@@ -25,8 +30,13 @@ __all__ = [
     'TelemetryData', 'ControlCommand', 'ControlStatus',
     'PredictionResult', 'AlarmEvent', 'AlarmAck',
     'ConfigUpdate', 'ServiceStatus',
+    'EndpointDetection', 'PressureRiseTest',
+    'DefrostOptimization', 'DefrostCommand', 'DefrostStatus',
+    'FleetSchedule', 'FleetCommand', 'FleetStatus',
+    'DefectDetection', 'ImageUpload', 'BatchRecord',
     'serialize_message', 'deserialize_message',
     'validate_message', 'extract_payload',
     'ConfigLoader', 'ControlConfig', 'ModelConfig', 'AlarmConfig',
+    'EndpointConfig', 'DefrostConfig', 'FleetConfig', 'DefectConfig',
     'config_loader'
 ]

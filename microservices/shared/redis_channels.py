@@ -28,6 +28,25 @@ CHANNELS = {
 
     # 数据库写入通道
     'DB_WRITE': 'db:write',                     # 批量写入请求
+
+    # ========== 新增功能通道 ==========
+    # 终点判定通道 - endpoint_detector -> 所有订阅者
+    'ENDPOINT_DETECTION': 'endpoint:detection',  # 干燥终点判定结果
+    'PRESSURE_RISE_TEST': 'endpoint:prt',        # 压力升测试命令/结果
+
+    # 冷阱除霜优化通道 - defrost_optimizer -> 相关服务
+    'DEFROST_OPTIMIZATION': 'defrost:optimization',  # 除霜优化建议
+    'DEFROST_COMMAND': 'defrost:command',            # 除霜执行命令
+    'DEFROST_STATUS': 'defrost:status',              # 除霜状态更新
+
+    # 群控调度通道 - fleet_controller -> 相关服务
+    'FLEET_SCHEDULE': 'fleet:schedule',       # 群控调度计划
+    'FLEET_COMMAND': 'fleet:command',         # 群控启停命令
+    'FLEET_STATUS': 'fleet:status',           # 群控状态更新
+
+    # 缺陷检测通道 - defect_detector -> 相关服务
+    'DEFECT_DETECTION': 'defect:detection',   # 缺陷检测结果
+    'IMAGE_UPLOAD': 'defect:image_upload',    # 图像上传通知
 }
 
 # 消息类型定义
@@ -41,6 +60,18 @@ MESSAGE_TYPES = {
     'CONFIG': 'config',
     'STATUS': 'status',
     'DB_BATCH': 'db_batch',
+    # 新增消息类型
+    'ENDPOINT': 'endpoint',
+    'PRESSURE_RISE_TEST': 'pressure_rise_test',
+    'DEFROST_OPTIMIZATION': 'defrost_optimization',
+    'DEFROST_COMMAND': 'defrost_command',
+    'DEFROST_STATUS': 'defrost_status',
+    'FLEET_SCHEDULE': 'fleet_schedule',
+    'FLEET_COMMAND': 'fleet_command',
+    'FLEET_STATUS': 'fleet_status',
+    'DEFECT_DETECTION': 'defect_detection',
+    'IMAGE_UPLOAD': 'image_upload',
+    'BATCH_RECORD': 'batch_record',
 }
 
 # 服务ID
@@ -51,6 +82,11 @@ SERVICE_IDS = {
     'ALARM_PUBLISHER': 'alarm-publisher',
     'API_GATEWAY': 'api-gateway',
     'DB_WRITER': 'db-writer',
+    # 新增服务ID
+    'ENDPOINT_DETECTOR': 'endpoint-detector',
+    'DEFROST_OPTIMIZER': 'defrost-optimizer',
+    'FLEET_CONTROLLER': 'fleet-controller',
+    'DEFECT_DETECTOR': 'defect-detector',
 }
 
 
